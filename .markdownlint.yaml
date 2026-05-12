@@ -1,0 +1,20 @@
+# =============================================================================
+# .markdownlint.yaml
+# =============================================================================
+# Sensible defaults for genome-vault docs.
+
+default: true
+
+# Disable rules that produce false positives on README-style files
+
+# MD036: emphasis-as-heading false-positives on README taglines
+MD036: false
+
+# MD013: line length — handled by editor/prose, not enforced here
+MD013: false
+
+# MD033: inline HTML allowed (we use <div align="center"> for the README banner)
+MD033: false
+
+# MD041: first line must be h1 — disabled because we use <div> banners
+MD041: false

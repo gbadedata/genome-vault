@@ -1,0 +1,119 @@
+# =============================================================================
+# .gitignore — Python + Terraform + GCP
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Python
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Testing / coverage
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+nosetests.xml
+coverage.xml
+*.cover
+htmlcov/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# -----------------------------------------------------------------------------
+# Terraform
+# -----------------------------------------------------------------------------
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files — STATE IS REMOTE; if these appear locally something is wrong
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Plan files (we always re-plan, never commit a plan file)
+*.tfplan
+
+# Override files (per-developer experimentation)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration
+.terraformrc
+terraform.rc
+
+# Lock files — DO commit
+# !.terraform.lock.hcl  ← intentionally NOT ignored
+
+# -----------------------------------------------------------------------------
+# GCP credentials — NEVER commit
+# -----------------------------------------------------------------------------
+*.json.key
+service-account*.json
+gcp-credentials.json
+application_default_credentials.json
+
+# -----------------------------------------------------------------------------
+# Env files
+# -----------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+
+# .env.example IS committed
+!.env.example
+
+# -----------------------------------------------------------------------------
+# Pre-commit secrets baseline
+# -----------------------------------------------------------------------------
+# Baseline IS committed; per-developer scan results are not
+.secrets-results.json
+
+# -----------------------------------------------------------------------------
+# OS junk
+# -----------------------------------------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/

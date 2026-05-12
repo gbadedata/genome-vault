@@ -1,0 +1,202 @@
+# =============================================================================
+# pyproject.toml
+# =============================================================================
+# Single source of truth for: build, dependencies, dev tooling, test config.
+
+[build-system]
+requires = ["hatchling>=1.20"]
+build-backend = "hatchling.build"
+
+# -----------------------------------------------------------------------------
+# Project metadata
+# -----------------------------------------------------------------------------
+[project]
+name = "genome-vault"
+version = "0.1.0"
+description = "Genomic variant warehouse on Google Cloud with BigQuery, Dataflow, and Django."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+  { name = "Gbade Odimayo" },
+]
+keywords = ["bioinformatics", "genomics", "bigquery", "dataflow", "gcp"]
+
+dependencies = [
+  # Core
+  "pydantic >= 2.7,<3.0",
+  "pydantic-settings >= 2.3,<3.0",
+  "structlog >= 24.1,<26.0",
+  "click >= 8.1,<9.0",
+
+  # GCP SDKs
+  "google-cloud-bigquery >= 3.21,<4.0",
+  "google-cloud-storage >= 2.16,<3.0",
+  "google-auth >= 2.30,<3.0",
+
+  # Genomic data handling
+  "pysam >= 0.22,<1.0",  # VCF/BAM parsing — the de facto standard
+
+  # Resilience
+  "tenacity >= 8.5,<10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  # Test
+  "pytest >= 8.2,<9.0",
+  "pytest-cov >= 5.0,<7.0",
+  "pytest-mock >= 3.14,<4.0",
+  "pytest-asyncio >= 0.23,<2.0",
+  "pytest-timeout >= 2.3,<3.0",
+
+  # Lint / format / type-check
+  "ruff >= 0.5,<1.0",
+  "mypy >= 1.10,<2.0",
+
+  # Pre-commit framework
+  "pre-commit >= 3.7,<5.0",
+  "detect-secrets >= 1.5,<2.0",
+
+  # Type stubs
+  "types-requests",
+]
+
+api = [
+  "Django >= 5.0,<6.0",
+  "djangorestframework >= 3.15,<4.0",
+  "django-environ >= 0.11,<1.0",
+  "gunicorn >= 22.0,<24.0",
+]
+
+dataflow = [
+  "apache-beam[gcp] >= 2.57,<3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/gbadedata/genome-vault"
+Repository = "https://github.com/gbadedata/genome-vault"
+Issues = "https://github.com/gbadedata/genome-vault/issues"
+
+# -----------------------------------------------------------------------------
+# Hatchling — where the source tree lives
+# -----------------------------------------------------------------------------
+[tool.hatch.build.targets.wheel]
+packages = ["src/genome_vault"]
+
+# -----------------------------------------------------------------------------
+# Ruff — linter + formatter
+# -----------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+  "E", "W",     # pycodestyle errors/warnings
+  "F",          # pyflakes
+  "I",          # isort
+  "B",          # bugbear
+  "C4",         # comprehensions
+  "UP",         # pyupgrade
+  "N",          # naming
+  "S",          # bandit (security)
+  "RUF",        # ruff-specific
+  "PT",         # pytest style
+  "SIM",        # simplification
+  "TID",        # tidy imports
+]
+ignore = [
+  "E501",       # line length handled by formatter
+  "S101",       # asserts are fine in tests
+  "S603",       # subprocess without shell=True is fine
+  "B008",       # function call in default arg is fine for FastAPI/Click
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*" = ["S", "PT011"]
+"scripts/**/*" = ["S"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["genome_vault"]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+# -----------------------------------------------------------------------------
+# Mypy — strict type checking
+# -----------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+exclude = [
+  "build/",
+  "dist/",
+  ".venv/",
+  ".terraform/",
+]
+
+[[tool.mypy.overrides]]
+module = [
+  "pysam.*",
+  "apache_beam.*",
+]
+ignore_missing_imports = true
+
+# -----------------------------------------------------------------------------
+# Pytest
+# -----------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = [
+  "-ra",
+  "--strict-markers",
+  "--strict-config",
+  "--cov=genome_vault",
+  "--cov-report=term-missing",
+  "--cov-report=xml",
+  "--cov-fail-under=70",
+  "-v",
+]
+markers = [
+  "unit: fast in-process tests (no I/O, no network)",
+  "integration: tests requiring GCP credentials or external services",
+  "slow: tests >5 seconds",
+]
+asyncio_mode = "auto"
+timeout = 60
+
+# -----------------------------------------------------------------------------
+# Coverage
+# -----------------------------------------------------------------------------
+[tool.coverage.run]
+source = ["src/genome_vault"]
+branch = true
+omit = [
+  "*/__init__.py",
+  "*/tests/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+]
+show_missing = true
+skip_covered = false
