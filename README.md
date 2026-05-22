@@ -2,7 +2,7 @@
 
 # genome-vault
 
-**Genomic variant warehouse on Google Cloud — BigQuery, Dataflow, Django, Looker Studio.**
+**Genomic variant warehouse on Google Cloud - BigQuery, Dataflow, Django, Looker Studio.**
 
 [![CI](https://github.com/gbadedata/genome-vault/actions/workflows/ci.yml/badge.svg)](https://github.com/gbadedata/genome-vault/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -20,12 +20,12 @@ genome-vault is a data platform for querying genomic variants at scale. It inges
 
 The platform is built around real bioinformatics data and standards:
 
-- **1000 Genomes Project** — 2,500 samples across 26 populations, used as the per-sample dimension
-- **gnomAD** (Genome Aggregation Database) — 800K+ samples, used as the population frequency reference
-- **VCF 4.2/4.3** — the file format the variant data is encoded in
-- **HGVS** — the standard nomenclature for describing sequence variants
-- **dbSNP rsIDs** — the canonical identifier for known variants
-- **GRCh38** — the human reference genome assembly used throughout
+- **1000 Genomes Project** - 2,500 samples across 26 populations, used as the per-sample dimension
+- **gnomAD** (Genome Aggregation Database) - 800K+ samples, used as the population frequency reference
+- **VCF 4.2/4.3** - the file format the variant data is encoded in
+- **HGVS** - the standard nomenclature for describing sequence variants
+- **dbSNP rsIDs** - the canonical identifier for known variants
+- **GRCh38** - the human reference genome assembly used throughout
 
 ## Architecture
 
@@ -64,9 +64,9 @@ The platform is built around real bioinformatics data and standards:
 
 Data flows in one direction through three quality tiers (medallion architecture):
 
-- **Bronze** — raw VCF rows as ingested, immutable for replay
-- **Silver** — validated, conformed to the star schema, joined against population references
-- **Gold** — pre-aggregated rollups for dashboards (variant counts per gene, per population, per impact severity)
+- **Bronze** - raw VCF rows as ingested, immutable for replay
+- **Silver** - validated, conformed to the star schema, joined against population references
+- **Gold** - pre-aggregated rollups for dashboards (variant counts per gene, per population, per impact severity)
 
 ## Quickstart
 
@@ -77,7 +77,7 @@ You need: Python 3.12, Terraform >= 1.9, gcloud CLI, an active GCP billing accou
 git clone https://github.com/gbadedata/genome-vault.git
 cd genome-vault
 
-# 2. Bootstrap GCP — creates the project, attaches billing, enables APIs,
+# 2. Bootstrap GCP - creates the project, attaches billing, enables APIs,
 #    creates the GCS bucket that holds Terraform state.
 make bq-bootstrap
 
@@ -156,16 +156,12 @@ Each ADR documents one architectural decision, the alternatives considered, and 
 
 ## Why I built this
 
-Genomic data is a uniquely demanding domain for a data platform. A single human VCF file contains millions of variant calls; gnomAD's reference is hundreds of millions of variants across half a million people. Querying this efficiently means thinking carefully about partitioning, clustering, and the cost of every column scanned — the kind of disciplined warehouse design that's easy to skip in projects with smaller data.
+Genomic data is a uniquely demanding domain for a data platform. A single human VCF file contains millions of variant calls; gnomAD's reference is hundreds of millions of variants across half a million people. Querying this efficiently means thinking carefully about partitioning, clustering, and the cost of every column scanned - the kind of disciplined warehouse design that's easy to skip in projects with smaller data.
 
-The other reason is that bioinformatics workflows are often built as scattered Python scripts feeding into ad-hoc Jupyter notebooks. A proper warehouse — with versioned schemas, a star-schema model, a queryable API, and a dashboard — turns one-off analysis into a platform other people can build on. That transition is what this project demonstrates.
-
-## Author
-
-**Gbade Odimayo** — [@gbadedata](https://github.com/gbadedata)
-
-Issues, questions, or improvements: [open an issue](https://github.com/gbadedata/genome-vault/issues) or send a pull request.
+The other reason is that bioinformatics workflows are often built as scattered Python scripts feeding into ad-hoc Jupyter notebooks. A proper warehouse - with versioned schemas, a star-schema model, a queryable API, and a dashboard - turns one-off analysis into a platform other people can build on. That transition is what this project demonstrates.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
+
+Issues, questions, or improvements: [open an issue](https://github.com/gbadedata/genome-vault/issues) or send a pull request.
