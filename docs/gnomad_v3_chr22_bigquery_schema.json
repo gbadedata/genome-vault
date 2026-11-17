@@ -1,0 +1,1096 @@
+{
+  "fields": [
+    {
+      "description": "Reference name.",
+      "mode": "NULLABLE",
+      "name": "reference_name",
+      "type": "STRING"
+    },
+    {
+      "description": "Start position (0-based). Corresponds to the first base of the string of reference bases.",
+      "mode": "NULLABLE",
+      "name": "start_position",
+      "type": "INTEGER"
+    },
+    {
+      "description": "End position (0-based). Corresponds to the first base after the last base in the reference allele.",
+      "mode": "NULLABLE",
+      "name": "end_position",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Reference bases.",
+      "mode": "NULLABLE",
+      "name": "reference_bases",
+      "type": "STRING"
+    },
+    {
+      "description": "One record for each alternate base (if any).",
+      "fields": [
+        {
+          "description": "Alternate base.",
+          "mode": "NULLABLE",
+          "name": "alt",
+          "type": "STRING"
+        },
+        {
+          "description": "Alternate allele count for samples",
+          "mode": "NULLABLE",
+          "name": "AC",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples",
+          "mode": "NULLABLE",
+          "name": "AF",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Total number of alternate alleles observed at variant locus",
+          "mode": "NULLABLE",
+          "name": "n_alt_alleles",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples of Ashkenazi Jewish ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_asj_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples of Ashkenazi Jewish ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_asj_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples of Ashkenazi Jewish ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_asj_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_eas_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_eas_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_eas_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_afr_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_afr_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_afr_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples",
+          "mode": "NULLABLE",
+          "name": "AC_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples",
+          "mode": "NULLABLE",
+          "name": "AF_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples",
+          "mode": "NULLABLE",
+          "name": "nhomalt_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples of Finnish ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_fin_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples of Finnish ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_fin_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples of Finnish ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_fin_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples of Other ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_oth_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples of Other ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_oth_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples of Other ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_oth_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples of Amish ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_ami",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples of Amish ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_ami",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples of Amish ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_ami",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples of Other ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_oth",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples of Other ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_oth",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples of Other ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_oth",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples",
+          "mode": "NULLABLE",
+          "name": "AC_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples",
+          "mode": "NULLABLE",
+          "name": "AF_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples",
+          "mode": "NULLABLE",
+          "name": "nhomalt_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples of Amish ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_ami_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples of Amish ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_ami_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples of Amish ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_ami_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_afr",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_afr",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_afr",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_eas_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_eas_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_eas_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_sas",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_sas",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_sas",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_nfe_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_nfe_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_nfe_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples of Ashkenazi Jewish ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_asj_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples of Ashkenazi Jewish ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_asj_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples of Ashkenazi Jewish ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_asj_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples, before removing low-confidence genotypes",
+          "mode": "NULLABLE",
+          "name": "AC_raw",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples, before removing low-confidence genotypes",
+          "mode": "NULLABLE",
+          "name": "AF_raw",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples, before removing low-confidence genotypes",
+          "mode": "NULLABLE",
+          "name": "nhomalt_raw",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples of Other ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_oth_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples of Other ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_oth_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples of Other ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_oth_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_nfe_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_nfe_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_nfe_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples of Ashkenazi Jewish ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_asj",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples of Ashkenazi Jewish ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_asj",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples of Ashkenazi Jewish ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_asj",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_amr_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_amr_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_amr_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Count of homozygous individuals in samples",
+          "mode": "NULLABLE",
+          "name": "nhomalt",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_amr_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_amr_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_amr_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_sas_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_sas_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_sas_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples of Finnish ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_fin",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples of Finnish ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_fin",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples of Finnish ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_fin",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_afr_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_afr_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_afr_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_sas_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_sas_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_sas_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_amr",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_amr",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_amr",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_nfe",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_nfe",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_nfe",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_eas",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_eas",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_eas",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for male samples of Amish ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_ami_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in male samples of Amish ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_ami_male",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in male samples of Amish ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_ami_male",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele count for female samples of Finnish ancestry",
+          "mode": "NULLABLE",
+          "name": "AC_fin_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Alternate allele frequency in female samples of Finnish ancestry",
+          "mode": "NULLABLE",
+          "name": "AF_fin_female",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Count of homozygous individuals in female samples of Finnish ancestry",
+          "mode": "NULLABLE",
+          "name": "nhomalt_fin_female",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 95% CI) for samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "faf95_afr",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 99% CI) for samples of African-American/African ancestry",
+          "mode": "NULLABLE",
+          "name": "faf99_afr",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 95% CI) for samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "faf95_sas",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 99% CI) for samples of South Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "faf99_sas",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 95% CI) for samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "faf95_amr",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 99% CI) for samples of Latino ancestry",
+          "mode": "NULLABLE",
+          "name": "faf99_amr",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 95% CI) for samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "faf95_nfe",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 99% CI) for samples of Non-Finnish European ancestry",
+          "mode": "NULLABLE",
+          "name": "faf99_nfe",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 95% CI) for samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "faf95_eas",
+          "type": "FLOAT"
+        },
+        {
+          "description": "Filtering allele frequency (using Poisson 99% CI) for samples of East Asian ancestry",
+          "mode": "NULLABLE",
+          "name": "faf99_eas",
+          "type": "FLOAT"
+        },
+        {
+          "description": "List of vep annotations for this alternate.",
+          "fields": [
+            {
+              "description": "The ALT part of the annotation field.",
+              "mode": "NULLABLE",
+              "name": "allele",
+              "type": "STRING"
+            },
+            {
+              "description": "Consequence type of this variant",
+              "mode": "NULLABLE",
+              "name": "Consequence",
+              "type": "STRING"
+            },
+            {
+              "description": "The impact modifier for the consequence type",
+              "mode": "NULLABLE",
+              "name": "IMPACT",
+              "type": "STRING"
+            },
+            {
+              "description": "The gene symbol",
+              "mode": "NULLABLE",
+              "name": "SYMBOL",
+              "type": "STRING"
+            },
+            {
+              "description": "Ensembl stable ID of affected gene",
+              "mode": "NULLABLE",
+              "name": "Gene",
+              "type": "STRING"
+            },
+            {
+              "description": "Type of feature. Currently one of Transcript, RegulatoryFeature, MotifFeature.",
+              "mode": "NULLABLE",
+              "name": "Feature_type",
+              "type": "STRING"
+            },
+            {
+              "description": "Ensembl stable ID of feature",
+              "mode": "NULLABLE",
+              "name": "Feature",
+              "type": "STRING"
+            },
+            {
+              "description": "Biotype of transcript or regulatory feature",
+              "mode": "NULLABLE",
+              "name": "BIOTYPE",
+              "type": "STRING"
+            },
+            {
+              "description": "The exon number (out of total number)",
+              "mode": "NULLABLE",
+              "name": "EXON",
+              "type": "STRING"
+            },
+            {
+              "description": "The intron number (out of total number)",
+              "mode": "NULLABLE",
+              "name": "INTRON",
+              "type": "STRING"
+            },
+            {
+              "description": "",
+              "mode": "NULLABLE",
+              "name": "empty",
+              "type": "STRING"
+            }
+          ],
+          "mode": "REPEATED",
+          "name": "vep",
+          "type": "RECORD"
+        }
+      ],
+      "mode": "REPEATED",
+      "name": "alternate_bases",
+      "type": "RECORD"
+    },
+    {
+      "description": "Variant names (e.g. RefSNP ID).",
+      "mode": "REPEATED",
+      "name": "names",
+      "type": "STRING"
+    },
+    {
+      "description": "Phred-scaled quality score (-10log10 prob(call is wrong)). Higher values imply better quality.",
+      "mode": "NULLABLE",
+      "name": "quality",
+      "type": "FLOAT"
+    },
+    {
+      "description": "List of failed filters (if any) or \"PASS\" indicating the variant has passed all filters.",
+      "mode": "REPEATED",
+      "name": "filter",
+      "type": "STRING"
+    },
+    {
+      "description": "One record for each call.",
+      "fields": [
+        {
+          "description": "Name of the call.",
+          "mode": "NULLABLE",
+          "name": "name",
+          "type": "STRING"
+        },
+        {
+          "description": "Genotype of the call. \"-1\" is used in cases where the genotype is not called.",
+          "mode": "REPEATED",
+          "name": "genotype",
+          "type": "INTEGER"
+        },
+        {
+          "description": "Phaseset of the call (if any). \"*\" is used in cases where the genotype is phased, but no phase set (\"PS\" in FORMAT) was specified.",
+          "mode": "NULLABLE",
+          "name": "phaseset",
+          "type": "STRING"
+        }
+      ],
+      "mode": "REPEATED",
+      "name": "call",
+      "type": "RECORD"
+    },
+    {
+      "description": "Total number of alleles in samples",
+      "mode": "NULLABLE",
+      "name": "AN",
+      "type": "INTEGER"
+    },
+    {
+      "description": "",
+      "mode": "NULLABLE",
+      "name": "non_par",
+      "type": "BOOLEAN"
+    },
+    {
+      "description": "Variant falls within a low complexity region",
+      "mode": "NULLABLE",
+      "name": "lcr",
+      "type": "BOOLEAN"
+    },
+    {
+      "description": "Variant type (snv, indel, multi-snv, multi-indel, or mixed)",
+      "mode": "NULLABLE",
+      "name": "variant_type",
+      "type": "STRING"
+    },
+    {
+      "description": "Z-score from Wilcoxon rank sum test of alternate vs. reference read position bias",
+      "mode": "NULLABLE",
+      "name": "ReadPosRankSum",
+      "type": "FLOAT"
+    },
+    {
+      "description": "Z-score from Wilcoxon rank sum test of alternate vs. reference read mapping qualities",
+      "mode": "NULLABLE",
+      "name": "MQRankSum",
+      "type": "FLOAT"
+    },
+    {
+      "description": "",
+      "mode": "NULLABLE",
+      "name": "RAW_MQ",
+      "type": "FLOAT"
+    },
+    {
+      "description": "Depth of informative coverage for each sample; reads with MQ=255 or with bad mates are filtered",
+      "mode": "NULLABLE",
+      "name": "DP",
+      "type": "INTEGER"
+    },
+    {
+      "description": "",
+      "mode": "NULLABLE",
+      "name": "MQ_DP",
+      "type": "INTEGER"
+    },
+    {
+      "description": "",
+      "mode": "NULLABLE",
+      "name": "VarDP",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Root mean square of the mapping quality of reads across all samples",
+      "mode": "NULLABLE",
+      "name": "MQ",
+      "type": "FLOAT"
+    },
+    {
+      "description": "Variant call confidence normalized by depth of sample reads supporting a variant",
+      "mode": "NULLABLE",
+      "name": "QD",
+      "type": "FLOAT"
+    },
+    {
+      "description": "Phred-scaled p-value of Fisher's exact test for strand bias",
+      "mode": "NULLABLE",
+      "name": "FS",
+      "type": "FLOAT"
+    },
+    {
+      "description": "",
+      "mode": "REPEATED",
+      "name": "SB",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Inbreeding coefficient as estimated from the genotype likelihoods per-sample when compared against the Hardy-Weinberg expectation",
+      "mode": "NULLABLE",
+      "name": "InbreedingCoeff",
+      "type": "FLOAT"
+    },
+    {
+      "description": "Log-odds ratio of being a true variant versus being a false positive under the trained allele-specific VQSR Gaussian mixture model",
+      "mode": "NULLABLE",
+      "name": "AS_VQSLOD",
+      "type": "FLOAT"
+    },
+    {
+      "description": "Variant was used to build the negative training set of low-quality variants for VQSR",
+      "mode": "NULLABLE",
+      "name": "NEGATIVE_TRAIN_SITE",
+      "type": "BOOLEAN"
+    },
+    {
+      "description": "Variant was used to build the positive training set of high-quality variants for VQSR",
+      "mode": "NULLABLE",
+      "name": "POSITIVE_TRAIN_SITE",
+      "type": "BOOLEAN"
+    },
+    {
+      "description": "Worst-performing annotation in the VQSR Gaussian mixture model",
+      "mode": "NULLABLE",
+      "name": "culprit",
+      "type": "STRING"
+    },
+    {
+      "description": "Strand bias estimated by the symmetric odds ratio test",
+      "mode": "NULLABLE",
+      "name": "SOR",
+      "type": "FLOAT"
+    },
+    {
+      "description": "Total number of alleles in female samples of Ashkenazi Jewish ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_asj_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in female samples of East Asian ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_eas_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples of African-American/African ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_afr_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in female samples",
+      "mode": "NULLABLE",
+      "name": "AN_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples of Finnish ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_fin_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in female samples of Other ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_oth_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples of Amish ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_ami",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples of Other ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_oth",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples",
+      "mode": "NULLABLE",
+      "name": "AN_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in female samples of Amish ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_ami_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples of African-American/African ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_afr",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples of East Asian ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_eas_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples of South Asian ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_sas",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in female samples of Non-Finnish European ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_nfe_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples of Ashkenazi Jewish ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_asj_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples, before removing low-confidence genotypes",
+      "mode": "NULLABLE",
+      "name": "AN_raw",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples of Other ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_oth_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples of Non-Finnish European ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_nfe_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples of Ashkenazi Jewish ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_asj",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples of Latino ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_amr_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in female samples of Latino ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_amr_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in female samples of South Asian ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_sas_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples of Finnish ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_fin",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in female samples of African-American/African ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_afr_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples of South Asian ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_sas_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples of Latino ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_amr",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples of Non-Finnish European ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_nfe",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in samples of East Asian ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_eas",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in male samples of Amish ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_ami_male",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Total number of alleles in female samples of Finnish ancestry",
+      "mode": "NULLABLE",
+      "name": "AN_fin_female",
+      "type": "INTEGER"
+    },
+    {
+      "description": "",
+      "mode": "NULLABLE",
+      "name": "faf95_adj",
+      "type": "FLOAT"
+    },
+    {
+      "description": "",
+      "mode": "NULLABLE",
+      "name": "faf99_adj",
+      "type": "FLOAT"
+    }
+  ]
+}

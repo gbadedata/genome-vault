@@ -1,0 +1,112 @@
+{
+  "created_at": "2026-11-17T15:25:26+00:00",
+  "dev_region": "chr22:42050000-42250000",
+  "sources": {
+    "kgp_chr22_vcf": {
+      "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/working/20220422_3202_phased_SNV_INDEL_SV/1kGP_high_coverage_Illumina.chr22.filtered.SNV_INDEL_SV_phased_panel.vcf.gz",
+      "path": "data/full/1kGP_high_coverage_Illumina.chr22.filtered.SNV_INDEL_SV_phased_panel.vcf.gz",
+      "bytes": 445701977,
+      "content_length": 445701977,
+      "last_modified": "Mon, 25 Apr 2022 15:46:25 GMT",
+      "sha256": "91aeaf0d1e805cf4223c5cbf12e22afc28db1709054c42bd668337219f8fddcc",
+      "retrieved_at": "2026-11-17T16:09:26+00:00",
+      "reference": null,
+      "records": 1066557
+    },
+    "kgp_chr22_tbi": {
+      "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/working/20220422_3202_phased_SNV_INDEL_SV/1kGP_high_coverage_Illumina.chr22.filtered.SNV_INDEL_SV_phased_panel.vcf.gz.tbi",
+      "path": "data/full/1kGP_high_coverage_Illumina.chr22.filtered.SNV_INDEL_SV_phased_panel.vcf.gz.tbi",
+      "bytes": 37411,
+      "content_length": 37411,
+      "last_modified": "Mon, 25 Apr 2022 14:25:57 GMT",
+      "sha256": "016cbb66398337629e4b06de238703a17bbfbc25f48f7f660876e8968e2da4de",
+      "retrieved_at": "2026-11-17T16:09:28+00:00"
+    },
+    "kgp_samples": {
+      "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/20130606_g1k_3202_samples_ped_population.txt",
+      "path": "data/full/20130606_g1k_3202_samples_ped_population.txt",
+      "bytes": 97483,
+      "content_length": 97483,
+      "last_modified": "Mon, 25 May 2020 14:14:09 GMT",
+      "sha256": "4e164b717433fc9bfc16e29b20e5b4659b4216185b3275322d421fe3d323c132",
+      "retrieved_at": "2026-11-17T16:09:28+00:00"
+    },
+    "clinvar_vcf": {
+      "url": "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz",
+      "path": "data/full/clinvar.vcf.gz",
+      "bytes": 201601306,
+      "content_length": 201601306,
+      "last_modified": "Mon, 16 Nov 2026 21:45:32 GMT",
+      "sha256": "a0984d79c24a6735c6c709142e81672d41c673e3011cafb3ce16d8d5390d6d68",
+      "retrieved_at": "2026-11-17T16:10:53+00:00",
+      "file_date": "2026-11-15",
+      "records_chr22": 100013
+    },
+    "clinvar_tbi": {
+      "url": "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz.tbi",
+      "path": "data/full/clinvar.vcf.gz.tbi",
+      "bytes": 611972,
+      "content_length": 611972,
+      "last_modified": "Mon, 16 Nov 2026 21:45:33 GMT",
+      "sha256": "185099df3c683e20d55f8817238f72ffb4ec2737875759412357619b969b1648",
+      "retrieved_at": "2026-11-17T16:10:54+00:00"
+    },
+    "ensembl_gff3": {
+      "url": "https://ftp.ensembl.org/pub/current_gff3/homo_sapiens/Homo_sapiens.GRCh38.116.chromosome.22.gff3.gz",
+      "path": "data/full/Homo_sapiens.GRCh38.116.chromosome.22.gff3.gz",
+      "bytes": 2597491,
+      "content_length": 2597491,
+      "last_modified": "Fri, 27 Mar 2026 01:23:40 GMT",
+      "sha256": "5f7d3b2dc44a4fa77c0f395be359510a00490932fbcdda667f8da26a2d42a857",
+      "retrieved_at": "2026-11-17T16:10:55+00:00"
+    },
+    "ucsc_chr22_fasta": {
+      "url": "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz",
+      "path": "data/full/chr22.fa.gz",
+      "bytes": 12255678,
+      "content_length": 12255678,
+      "last_modified": "Fri, 24 Jan 2014 00:39:55 GMT",
+      "sha256": "05f9d97d6fbfd08a44ca45b50837ca2ae9c471f35ba79dffec04d2cb5eaaf695",
+      "retrieved_at": "2026-11-17T16:11:00+00:00"
+    },
+    "gnomad_v3_chr22_bigquery": {
+      "table": "bigquery-public-data:gnomAD.v3_genomes__chr22",
+      "location": "US",
+      "num_rows": "10882958",
+      "num_bytes": "19095692286",
+      "last_modified_ms": "1589391345248",
+      "schema_path": "data/sources/gnomad_v3_chr22_schema.json",
+      "retrieved_at": "2026-11-17T16:13:09+00:00"
+    }
+  },
+  "fixtures": {
+    "kgp_vcf": {
+      "path": "tests/fixtures/real/kgp_chr22_42050k_42250k.vcf.gz",
+      "count": 5452,
+      "sha256": "c18e6515c4ce689b65f5889d8f0a5db8b763d03dc04b519e2ce8c83ee9859503"
+    },
+    "clinvar_vcf": {
+      "path": "tests/fixtures/real/clinvar_22_42050k_42250k.vcf.gz",
+      "count": 2388,
+      "sha256": "8b428b0253546e3177838d484f6864857d8a1f6913622e39b20645e890312206"
+    },
+    "ensembl_genes": {
+      "path": "tests/fixtures/real/ensembl_genes_22_42050k_42250k.gff3.gz",
+      "count": 20,
+      "sha256": "c958dba46d4c921c9b5efc0405007a5b1248fbc3df6d0f3ade4b9762ecc4131f"
+    },
+    "reference": {
+      "path": "tests/fixtures/real/grch38_chr22_42050k_42250k.fa",
+      "count": 200001,
+      "sha256": "bb7c60c5b10a7afb66e78576eff1faafedcf465884aa510c2ad0b48532ba894d"
+    },
+    "kgp_samples": {
+      "path": "tests/fixtures/real/20130606_g1k_3202_samples_ped_population.txt",
+      "sha256": "4e164b717433fc9bfc16e29b20e5b4659b4216185b3275322d421fe3d323c132"
+    },
+    "ensembl_genes_chr22_all": {
+      "path": "data/full/ensembl_genes_22.gff3.gz",
+      "count": 1747
+    }
+  }
+}
