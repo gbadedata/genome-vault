@@ -28,6 +28,8 @@ models:
       +materialized: table
     analysis:
       +materialized: table
+    serving:
+      +materialized: table
 
 flags:
   send_anonymous_usage_stats: false

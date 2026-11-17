@@ -1,10 +1,15 @@
 {# Small helpers so the same models run on DuckDB (local, CI) and BigQuery. #}
 
-{% macro safe_div(num, den) -%}
-  case when ({{ den }}) = 0 then null else cast({{ num }} as {{ dbt.type_float() }}) / ({{ den }}) end
+{# Double precision on both engines. dbt.type_float() is a 4-byte REAL on
+   DuckDB but FLOAT64 on BigQuery, which would make CI compute ratios and
+   p-values at lower precision than production. #}
+{% macro float_type() -%}
+  {%- if target.type == 'bigquery' -%}float64{%- else -%}double{%- endif -%}
 {%- endmacro %}
 
-{% macro float_type() -%}{{ dbt.type_float() }}{%- endmacro %}
+{% macro safe_div(num, den) -%}
+  case when ({{ den }}) = 0 then null else cast({{ num }} as {{ float_type() }}) / ({{ den }}) end
+{%- endmacro %}
 
 {# Integers 0..n as a one-column relation named k. #}
 {% macro int_series(n) -%}

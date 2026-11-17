@@ -5,7 +5,7 @@
 
 .PHONY: help setup install lint lint-fix typecheck test test-unit test-integration \
         clean tf-init tf-plan tf-apply tf-destroy tf-fmt bq-bootstrap \
-        fetch load-slice warehouse-local slice load-bq warehouse-bq
+        fetch load-slice warehouse-local slice load-bq warehouse-bq api deploy-api
 
 # Default goal is help
 .DEFAULT_GOAL := help
@@ -27,7 +27,7 @@ help:  ## Show this help.
 # -----------------------------------------------------------------------------
 setup: $(VENV)/bin/activate  ## Create venv and install dev deps.
 	$(PIP) install --upgrade pip setuptools wheel
-	$(PIP) install -e ".[dev]"
+	$(PIP) install -e ".[dev,api]"
 	@echo ""
 	@echo "Setup complete. Activate with: source .venv/bin/activate"
 
@@ -107,8 +107,15 @@ slice: load-slice warehouse-local  ## Load the real slice and build the warehous
 load-bq:  ## Load full chr22 and load it into BigQuery gv_raw (needs terraform apply).
 	bash scripts/load_bigquery.sh
 
-warehouse-bq:  ## dbt build on BigQuery, then write docs/evidence/bigquery_full_chr22.*
+warehouse-bq:  ## dbt build on BigQuery, then write data/work/evidence/bigquery_full_chr22.*
 	bash scripts/build_bigquery.sh
+
+api:  ## Run the API locally on the DuckDB warehouse (after make slice): http://127.0.0.1:8000/docs
+	GV_API_BACKEND=duckdb GV_DUCKDB=$(DUCKDB) GV_CODE_VERSION=local PYTHONPATH=src \
+	  $(VENV)/bin/uvicorn genome_vault.api.app:app --reload
+
+deploy-api:  ## Build the API image with Cloud Build and deploy it to Cloud Run.
+	bash scripts/deploy_api.sh
 
 # -----------------------------------------------------------------------------
 # Terraform

@@ -1,0 +1,4 @@
+# Pinned runtime dependencies of the API container (versions tested in CI).
+fastapi==0.163.2
+uvicorn==0.54.0
+google-cloud-bigquery==3.47.0

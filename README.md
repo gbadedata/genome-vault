@@ -9,7 +9,7 @@
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![dbt](https://img.shields.io/badge/dbt-DuckDB%20%7C%20BigQuery-orange.svg)](warehouse/)
 
-[Results](#results) · [How the numbers are checked](#how-the-numbers-are-checked) · [What the findings are](#what-the-findings-are) · [Architecture](#architecture) · [Run it](#run-it) · [Decisions](docs/adr/README.md)
+[Results](#results) · [How the numbers are checked](#how-the-numbers-are-checked) · [What the findings are](#what-the-findings-are) · [API](#api) · [Architecture](#architecture) · [Run it](#run-it) · [Decisions](docs/adr/README.md)
 
 </div>
 
@@ -95,6 +95,26 @@ A frequency that high in a reference population is a standard prompt to review a
 
 **No record is quarantined.** The two that once were, a `<DEL>` at chr22:22,857,056 and an `<INS>` at chr22:49,951,209, turned out to be distinct structural variants that the old key could not tell apart. Fixing the key loaded them along with their 71 genotype rows, and every allele-count check still holds with them included.
 
+## API
+
+A read-only FastAPI service serves lookups from the warehouse ([ADR-015](docs/adr/015-read-only-api-on-cloud-run.md)).
+
+| Endpoint | Returns |
+|---|---|
+| `GET /variants/{variant_id}` | One variant: genes, GIAB region class, frequency per superpopulation with gnomAD's and the HWE p-value, QC flags, ClinVar |
+| `GET /variants?chrom=chr22&start=…&end=…` | Variants in a region (at most 1 Mb, 500 rows); `flagged_only=true` keeps those with a QC flag |
+| `GET /variants?rsid=rs5758566` | Variants by ClinVar rsID |
+| `GET /genes/{symbol}` | A gene and the variants overlapping it |
+| `GET /samples/{sample_id}` | A sample's population, relatedness and QC z-scores |
+| `GET /qc/summary`, `GET /qc/findings-by-region` | The invariants and findings above |
+
+```bash
+make slice && make api          # then open http://127.0.0.1:8000/docs
+curl -s 127.0.0.1:8000/variants/chr22:42058350:G:A
+```
+
+Every variant query filters on chromosome and position, so on BigQuery it reads a few blocks of the clustered `api_variant` serving table, not the table. The service runs as a service account that can only read the `gv` dataset. Each query is capped at 200 MB, and the service at 25 GB of BigQuery a day, which keeps a month of maximum use inside BigQuery's free tier. Each IP gets 60 requests a minute. `bash scripts/deploy_api.sh` builds the image with Cloud Build, deploys it with Terraform, and smoke-tests every endpoint on the live URL.
+
 ## Architecture
 
 ```mermaid
@@ -115,6 +135,7 @@ flowchart LR
     GNOMAD --> DBT
     DBT --> GV[(BigQuery gv)]
     GV -->|bq_evidence.py| EV[docs/evidence]
+    GV -->|api_variant, clustered| API[FastAPI on Cloud Run<br/>read-only service account]
 
     FULL -.->|200 kb real slice| FX[tests/fixtures/real]
     FX -.->|CI: same loader| DUCK[(DuckDB)]
@@ -132,17 +153,19 @@ flowchart LR
 | Layer | Models |
 |---|---|
 | Staging | Typed views over the raw tables and gnomAD |
-| Star schema | `dim_sample`, `dim_population`, `dim_variant` (genes, ClinVar), `variant_context` (GIAB region class), `fct_genotype` (sparse, clustered by variant) |
+| Star schema | `dim_sample`, `dim_population`, `dim_variant` (genes, ClinVar), `bridge_variant_gene`, `variant_context` (GIAB region class), `fct_genotype` (sparse, clustered by variant) |
 | Analysis | `variant_population_freq`, `qc_allele_count_reconciliation`, `qc_hardy_weinberg`, `gnomad_concordance`, `qc_gnomad_offset`, `clinvar_in_cohort`, `qc_sample`, `findings_by_region_class`, `qc_summary` |
+| Serving | `api_variant` (one row per variant, clustered by position), `api_gene` |
 
 **Infrastructure** (`infra/terraform`):
 - A GCS bucket (90-day lifecycle on run prefixes) and two BigQuery datasets, all in the US so they can join the public gnomAD table ([ADR-011](docs/adr/011-us-location-and-cost-guards.md)).
 - A £30 monthly budget alert.
 
-**CI** (GitHub Actions), three jobs:
-1. Lint, unit tests, loading the real slice, then `dbt build` on DuckDB.
+**CI** (GitHub Actions), four jobs:
+1. Lint, loading the real slice, `dbt build` on DuckDB, then the unit tests and the API tests against the warehouse just built.
 2. `dbt compile` for BigQuery with an offline profile, with every compiled file parsed as BigQuery SQL.
-3. `terraform fmt` and `validate`.
+3. Building the API container, starting it and checking it runs as a non-root user.
+4. `terraform fmt` and `validate`.
 
 ## Run it
 
@@ -167,17 +190,19 @@ python scripts/fetch_sources.py          # about 750 MB, resumable; writes data/
 bash scripts/bootstrap-gcp.sh            # project, billing, APIs, Terraform state bucket (idempotent)
 (cd infra/terraform/environments/dev && terraform init && terraform apply)
 bash scripts/load_bigquery.sh            # loader, upload, bq load, row-count check (about 15 min)
-bash scripts/build_bigquery.sh           # dbt build on BigQuery, then docs/evidence/
+bash scripts/build_bigquery.sh           # dbt build on BigQuery, then data/work/evidence/
+bash scripts/deploy_api.sh               # API image via Cloud Build, Cloud Run via Terraform, live smoke test
 ```
 
 ## Repository layout
 
 ```text
-src/genome_vault/        loader: VCF, ClinVar, GFF3, samples, GIAB BEDs → Parquet
+src/genome_vault/        loader (VCF, ClinVar, GFF3, samples, GIAB BEDs → Parquet) and api/ (FastAPI)
 warehouse/               dbt project: staging, marts, analysis, tests, portable macros
-scripts/                 fetch_sources.py, load_bigquery.sh, build_bigquery.sh, bq_evidence.py
-infra/terraform/         bucket, datasets, budget (environments/dev)
-tests/                   unit tests on the committed real slice (tests/fixtures/real)
+scripts/                 fetch_sources.py, load_bigquery.sh, build_bigquery.sh, bq_evidence.py, deploy_api.sh, api_smoke.py
+deploy/api/              API Dockerfile and pinned requirements
+infra/terraform/         bucket, datasets, budget, API registry, service account and Cloud Run (environments/dev)
+tests/                   unit tests on the committed real slice (tests/fixtures/real); API tests on the warehouse built from it
 docs/adr/                architecture decision records
 docs/evidence/           output of each full BigQuery run
 ```

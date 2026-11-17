@@ -21,11 +21,9 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev,api]"
       - name: Lint
         run: ruff check --select E,F,W,B,UP,I --ignore E501 src scripts tests
-      - name: Unit tests (loader on the real slice)
-        run: pytest -m unit
       - name: Load the real slice
         run: |
           genome-vault load \
@@ -47,6 +45,8 @@ jobs:
       - name: Build and test the warehouse (dbt on DuckDB)
         working-directory: warehouse
         run: dbt build --target local
+      - name: Unit and API tests (loader on the real slice; API on the warehouse just built)
+        run: pytest -m "unit or api"
       - name: Show the QC summary
         working-directory: warehouse
         run: dbt show --inline "select kind, check_name, passed, detail from {{ ref('qc_summary') }}" --limit 50
@@ -69,6 +69,21 @@ jobs:
         run: dbt compile --target bigquery --no-populate-cache --target-path target-bq
       - name: Parse every compiled file as BigQuery SQL
         run: python scripts/check_bigquery_sql.py warehouse/target-bq/compiled
+
+  api-image:
+    name: Build the API container and check it starts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: docker build -f deploy/api/Dockerfile -t genome-vault-api:ci .
+      - name: Start and call /health
+        run: |
+          docker run -d --name api -p 8080:8080 -e GV_CODE_VERSION=ci genome-vault-api:ci
+          for i in $(seq 1 30); do curl -fsS localhost:8080/health && break; sleep 1; done
+          curl -fsS localhost:8080/health | grep -q '"status":"ok"'
+          docker exec api python -c "import genome_vault.api.app"
+          docker exec api sh -c 'id -u' | grep -qx 10001
 
   terraform:
     name: Terraform fmt and validate
