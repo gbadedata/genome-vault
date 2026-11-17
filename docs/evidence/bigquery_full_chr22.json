@@ -1,11 +1,12 @@
 {
-  "generated_at": "2026-11-17T20:39:46+00:00",
+  "generated_at": "2026-11-17T21:49:58+00:00",
   "project": "genome-vault-202605",
   "dataset": "gv",
+  "code_version": "c5e9666",
   "dbt": {
-    "invocation_id": "dfb19179-991c-4c8b-b9e6-00d7ae2f136e",
+    "invocation_id": "cb74538b-a40d-4988-b3fa-1246a4c046d2",
     "dbt_version": "1.13.0b1",
-    "elapsed_seconds": 78.6,
+    "elapsed_seconds": 74.6,
     "statuses": {
       "success": 26,
       "pass": 30
@@ -15,15 +16,9 @@
   "qc_summary": [
     {
       "kind": "finding",
-      "check_name": "share in GIAB difficult regions: hwe_departure",
+      "check_name": "frequency differences flagged against gnomAD (variant-population pairs)",
       "passed": null,
-      "detail": "93.6% of variants with the finding vs 40.9% of variants tested"
-    },
-    {
-      "kind": "finding",
-      "check_name": "variant-population pairs found in gnomAD",
-      "passed": null,
-      "detail": "4892150 of 5325475"
+      "detail": "1718"
     },
     {
       "kind": "finding",
@@ -33,27 +28,21 @@
     },
     {
       "kind": "finding",
-      "check_name": "frequency differences flagged against gnomAD (variant-population pairs)",
-      "passed": null,
-      "detail": "1718"
-    },
-    {
-      "kind": "finding",
-      "check_name": "samples flagged by QC z-scores",
-      "passed": null,
-      "detail": "27"
-    },
-    {
-      "kind": "finding",
-      "check_name": "HWE departures, exact p < threshold, unrelated (variant-population pairs)",
-      "passed": null,
-      "detail": "11345"
-    },
-    {
-      "kind": "finding",
       "check_name": "share in GIAB difficult regions: common_but_absent_from_gnomad",
       "passed": null,
       "detail": "99.7% of variants with the finding vs 45% of variants tested"
+    },
+    {
+      "kind": "finding",
+      "check_name": "variant-population pairs found in gnomAD",
+      "passed": null,
+      "detail": "4892150 of 5325475"
+    },
+    {
+      "kind": "finding",
+      "check_name": "samples flagged by QC z-scores (within population; within superpopulation)",
+      "passed": null,
+      "detail": "15; 27"
     },
     {
       "kind": "finding",
@@ -62,16 +51,22 @@
       "detail": "94.9% of variants with the finding vs 41.7% of variants tested"
     },
     {
-      "kind": "invariant",
-      "check_name": "genotype rows equal loader count",
-      "passed": true,
-      "detail": "207523893"
+      "kind": "finding",
+      "check_name": "share in GIAB difficult regions: hwe_departure",
+      "passed": null,
+      "detail": "93.6% of variants with the finding vs 40.9% of variants tested"
+    },
+    {
+      "kind": "finding",
+      "check_name": "HWE departures, exact p < threshold, unrelated (variant-population pairs)",
+      "passed": null,
+      "detail": "11345"
     },
     {
       "kind": "invariant",
-      "check_name": "allele counts reproduce source (unrelated)",
+      "check_name": "genotype rows equal loader count",
       "passed": true,
-      "detail": "5332775"
+      "detail": "207523964"
     },
     {
       "kind": "invariant",
@@ -81,9 +76,15 @@
     },
     {
       "kind": "invariant",
-      "check_name": "REF alleles match GRCh38",
+      "check_name": "allele counts reproduce source (unrelated)",
       "passed": true,
-      "detail": "1066555"
+      "detail": "5332785"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "allele counts reproduce source (all samples)",
+      "passed": true,
+      "detail": "6399342"
     },
     {
       "kind": "invariant",
@@ -93,21 +94,21 @@
     },
     {
       "kind": "invariant",
-      "check_name": "gnomAD positions are 0-based (+1 matches best)",
+      "check_name": "REF alleles match GRCh38",
       "passed": true,
-      "detail": "190739 vs 7609"
-    },
-    {
-      "kind": "invariant",
-      "check_name": "allele counts reproduce source (all samples)",
-      "passed": true,
-      "detail": "6399330"
+      "detail": "1066557"
     },
     {
       "kind": "invariant",
       "check_name": "variant rows equal records loaded",
       "passed": true,
-      "detail": "1066555"
+      "detail": "1066557"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "gnomAD positions are 0-based (+1 matches best)",
+      "passed": true,
+      "detail": "190739 vs 7609"
     }
   ],
   "findings": {
@@ -300,11 +301,11 @@
       },
       {
         "region_class": "segmental_duplication",
-        "variants": 187757
+        "variants": 187758
       },
       {
         "region_class": "tandem_repeat_or_homopolymer",
-        "variants": 160760
+        "variants": 160761
       },
       {
         "region_class": "other_difficult",
@@ -347,43 +348,23 @@
     ],
     "flagged_samples_by_population": [
       {
-        "superpopulation": "AFR",
-        "population": "ASW",
-        "samples": 8,
-        "on_ti_tv": 0,
-        "on_het_hom": 1,
-        "on_non_ref_sites": 7,
-        "mean_het_hom_z": 0.9,
-        "outside_unrelated_set": 0
-      },
-      {
-        "superpopulation": "AFR",
-        "population": "ACB",
-        "samples": 3,
-        "on_ti_tv": 0,
-        "on_het_hom": 2,
-        "on_non_ref_sites": 1,
-        "mean_het_hom_z": 3.9,
-        "outside_unrelated_set": 0
-      },
-      {
-        "superpopulation": "AMR",
-        "population": "PUR",
-        "samples": 3,
-        "on_ti_tv": 0,
-        "on_het_hom": 0,
-        "on_non_ref_sites": 3,
-        "mean_het_hom_z": 1.1,
-        "outside_unrelated_set": 1
-      },
-      {
         "superpopulation": "SAS",
         "population": "PJL",
         "samples": 3,
         "on_ti_tv": 0,
         "on_het_hom": 3,
         "on_non_ref_sites": 2,
-        "mean_het_hom_z": -5.5,
+        "mean_het_hom_z": -4.7,
+        "outside_unrelated_set": 1
+      },
+      {
+        "superpopulation": "AFR",
+        "population": "GWD",
+        "samples": 2,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": -4.7,
         "outside_unrelated_set": 1
       },
       {
@@ -393,7 +374,17 @@
         "on_ti_tv": 0,
         "on_het_hom": 2,
         "on_non_ref_sites": 1,
-        "mean_het_hom_z": -4.7,
+        "mean_het_hom_z": -5.2,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "AMR",
+        "population": "PUR",
+        "samples": 2,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": -1.4,
         "outside_unrelated_set": 0
       },
       {
@@ -402,28 +393,8 @@
         "samples": 2,
         "on_ti_tv": 0,
         "on_het_hom": 2,
-        "on_non_ref_sites": 2,
-        "mean_het_hom_z": -5.3,
-        "outside_unrelated_set": 0
-      },
-      {
-        "superpopulation": "EUR",
-        "population": "GBR",
-        "samples": 1,
-        "on_ti_tv": 0,
-        "on_het_hom": 1,
-        "on_non_ref_sites": 0,
-        "mean_het_hom_z": -4.9,
-        "outside_unrelated_set": 0
-      },
-      {
-        "superpopulation": "AFR",
-        "population": "GWD",
-        "samples": 1,
-        "on_ti_tv": 0,
-        "on_het_hom": 1,
-        "on_non_ref_sites": 0,
-        "mean_het_hom_z": -4.7,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": -4.6,
         "outside_unrelated_set": 0
       },
       {
@@ -432,18 +403,18 @@
         "samples": 1,
         "on_ti_tv": 0,
         "on_het_hom": 1,
-        "on_non_ref_sites": 0,
+        "on_non_ref_sites": 1,
         "mean_het_hom_z": -4.7,
         "outside_unrelated_set": 0
       },
       {
-        "superpopulation": "EAS",
-        "population": "CDX",
+        "superpopulation": "AFR",
+        "population": "ESN",
         "samples": 1,
         "on_ti_tv": 0,
         "on_het_hom": 1,
         "on_non_ref_sites": 1,
-        "mean_het_hom_z": -4.3,
+        "mean_het_hom_z": -6.9,
         "outside_unrelated_set": 0
       },
       {
@@ -453,18 +424,27 @@
         "on_ti_tv": 0,
         "on_het_hom": 1,
         "on_non_ref_sites": 1,
-        "mean_het_hom_z": -8.1,
+        "mean_het_hom_z": -6.9,
         "outside_unrelated_set": 1
       },
       {
-        "superpopulation": "AFR",
-        "population": "ESN",
+        "superpopulation": "EAS",
+        "population": "CDX",
         "samples": 1,
         "on_ti_tv": 0,
-        "on_het_hom": 1,
-        "on_non_ref_sites": 0,
-        "mean_het_hom_z": -6.3,
+        "on_het_hom": 0,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": -4.0,
         "outside_unrelated_set": 0
+      }
+    ],
+    "sample_flags_compared": [
+      {
+        "within_population": 15,
+        "within_superpopulation": 27,
+        "both": 13,
+        "superpopulation_only": 14,
+        "population_only": 2
       }
     ],
     "clinvar_common_pathogenic": [
@@ -487,28 +467,7 @@
         "max_pop_af": 0.0159
       }
     ],
-    "quarantined_1000g_records": [
-      {
-        "source": "1000G_30x_phased_panel",
-        "record_number": 273140,
-        "chrom": "chr22",
-        "pos": 22857056,
-        "ref": "T",
-        "alt": "<DEL>",
-        "source_id": "HGSV_245419",
-        "reason": "DUPLICATE_VARIANT"
-      },
-      {
-        "source": "1000G_30x_phased_panel",
-        "record_number": 1038198,
-        "chrom": "chr22",
-        "pos": 49951209,
-        "ref": "G",
-        "alt": "<INS>",
-        "source_id": "HGSV_248347",
-        "reason": "DUPLICATE_VARIANT"
-      }
-    ]
+    "quarantined_1000g_records": []
   },
   "tables": {
     "dim_sample": {
@@ -523,12 +482,12 @@
     },
     "dim_variant": {
       "type": "TABLE",
-      "rows": 1066555,
+      "rows": 1066557,
       "gb": 0.114
     },
     "fct_genotype": {
       "type": "TABLE",
-      "rows": 207523893,
+      "rows": 207523964,
       "gb": 6.433
     },
     "stg_gnomad": {
@@ -538,12 +497,12 @@
     },
     "variant_population_freq": {
       "type": "TABLE",
-      "rows": 6399330,
-      "gb": 0.966
+      "rows": 6399342,
+      "gb": 0.967
     },
     "qc_allele_count_reconciliation": {
       "type": "TABLE",
-      "rows": 6399330,
+      "rows": 6399342,
       "gb": 0.654
     },
     "qc_hardy_weinberg": {
@@ -568,7 +527,7 @@
     },
     "variant_context": {
       "type": "TABLE",
-      "rows": 1066555,
+      "rows": 1066557,
       "gb": 0.033
     },
     "findings_by_region_class": {
@@ -592,55 +551,65 @@
       {
         "node_id": "model_genome_vault_fct_genotype",
         "gb_billed": 5.188,
-        "seconds": 4.061
+        "seconds": 4.011
       },
       {
         "node_id": "model_genome_vault_qc_sample",
         "gb_billed": 4.996,
-        "seconds": 3.275
+        "seconds": 2.487
       },
       {
         "node_id": "model_genome_vault_variant_population_freq",
         "gb_billed": 4.602,
-        "seconds": 9.341
+        "seconds": 2.743
       },
       {
         "node_id": "model_genome_vault_stg_gnomad",
         "gb_billed": 1.892,
-        "seconds": 3.98
+        "seconds": 2.647
       },
       {
         "node_id": "test_genome_vault_relationships_fct_genotype_variant_key__varia",
         "gb_billed": 1.669,
-        "seconds": 0.674
-      },
-      {
-        "node_id": "test_genome_vault_accepted_values_fct_genotype_gt__false__1__2_",
-        "gb_billed": 1.661,
-        "seconds": 0.263
+        "seconds": 0.516
       },
       {
         "node_id": "test_genome_vault_relationships_fct_genotype_sample_index__samp",
         "gb_billed": 1.661,
-        "seconds": 0.261
+        "seconds": 0.457
+      },
+      {
+        "node_id": "test_genome_vault_accepted_values_fct_genotype_gt__false__1__2_",
+        "gb_billed": 1.661,
+        "seconds": 0.293
       },
       {
         "node_id": "model_genome_vault_gnomad_concordance",
         "gb_billed": 1.653,
-        "seconds": 4.034
+        "seconds": 3.74
       }
     ]
   },
   "load": {
-    "run_id": "20261117T203422Z",
+    "run_id": "20261117T212537Z",
+    "code_version": "c5e9666",
     "tables_uploaded": [
+      "clinvar_quarantine",
+      "clinvar_variants",
+      "ensembl_genes",
+      "genome_region_sources",
       "genome_regions",
-      "genome_region_sources"
+      "kgp_genotypes",
+      "kgp_quarantine",
+      "kgp_samples",
+      "kgp_samples_vcf",
+      "kgp_variants",
+      "load_runs"
     ],
-    "loaded_at": "2026-11-17T20:38:06+00:00",
+    "loaded_at": "2026-11-17T21:48:21+00:00",
     "project": "genome-vault-202605",
     "dataset": "gv_raw",
-    "gcs_prefix": "gs://genome-vault-202605-gv-data/runs/20261117T203422Z/parquet",
+    "gcs_prefix": "gs://genome-vault-202605-gv-data/runs/20261117T212537Z/parquet",
     "tables": {
       "clinvar_quarantine": {
         "parquet_rows": 52,
@@ -668,14 +637,14 @@
         "bigquery_bytes": 5432065
       },
       "kgp_genotypes": {
-        "parquet_rows": 207523893,
-        "bigquery_rows": 207523893,
-        "bigquery_bytes": 5188097325
+        "parquet_rows": 207523964,
+        "bigquery_rows": 207523964,
+        "bigquery_bytes": 5188099100
       },
       "kgp_quarantine": {
-        "parquet_rows": 2,
-        "bigquery_rows": 2,
-        "bigquery_bytes": 178
+        "parquet_rows": 0,
+        "bigquery_rows": 0,
+        "bigquery_bytes": 0
       },
       "kgp_samples": {
         "parquet_rows": 3202,
@@ -688,18 +657,18 @@
         "bigquery_bytes": 54434
       },
       "kgp_variants": {
-        "parquet_rows": 1066555,
-        "bigquery_rows": 1066555,
-        "bigquery_bytes": 340349637
+        "parquet_rows": 1066557,
+        "bigquery_rows": 1066557,
+        "bigquery_bytes": 340370417
       },
       "load_runs": {
         "parquet_rows": 4,
         "bigquery_rows": 4,
-        "bigquery_bytes": 936
+        "bigquery_bytes": 914
       }
     },
     "loader_summary": {
-      "run_id": "20261117T195222Z",
+      "run_id": "20261117T212712Z",
       "contig": "chr22",
       "region": null,
       "sources": {
@@ -708,21 +677,21 @@
           "path": "data/full/1kGP_high_coverage_Illumina.chr22.filtered.SNV_INDEL_SV_phased_panel.vcf.gz",
           "sha256": "91aeaf0d1e805cf4223c5cbf12e22afc28db1709054c42bd668337219f8fddcc",
           "records_read": 1066557,
-          "records_loaded": 1066555,
-          "records_quarantined": 2,
-          "quarantine_reasons": "{\"DUPLICATE_VARIANT\": 2}",
-          "genotype_rows": 207523893,
+          "records_loaded": 1066557,
+          "records_quarantined": 0,
+          "quarantine_reasons": "{}",
+          "genotype_rows": 207523964,
           "missing_calls": 0,
           "samples": 3202,
           "region": null,
-          "seconds": 342.36,
+          "seconds": 336.53,
           "classes": {
             "INDEL": 139365,
             "SNV": 925730,
-            "SV": 1460
+            "SV": 1462
           },
           "ref_checks": {
-            "match": 1066555
+            "match": 1066557
           }
         },
         "ClinVar": {
@@ -737,7 +706,7 @@
           "missing_calls": 0,
           "samples": 0,
           "region": null,
-          "seconds": 3.32
+          "seconds": 2.82
         },
         "Ensembl_genes": {
           "source": "Ensembl_genes",
@@ -751,7 +720,7 @@
           "missing_calls": 0,
           "samples": 0,
           "region": null,
-          "seconds": 0.27
+          "seconds": 0.26
         },
         "1000G_samples": {
           "source": "1000G_samples",
@@ -765,7 +734,7 @@
           "missing_calls": 0,
           "samples": 0,
           "region": null,
-          "seconds": 0.04
+          "seconds": 0.06
         }
       }
     }

@@ -5,7 +5,7 @@
 ## Context
 
 Synthetic genotypes would let tests pass while hiding the quirks real data has. Examples found in this build:
-- duplicate records in the source VCF;
+- structural variants that start at the same base and differ only in END and SVLEN;
 - symbolic SV alleles with lowercase text;
 - ClinVar records with no ALT;
 - a 0-based coordinate column in gnomAD;

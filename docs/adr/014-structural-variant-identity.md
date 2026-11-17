@@ -17,3 +17,7 @@ For symbolic alleles only, the key is `chrom:pos:ref:alt:end:svlen`, taken from 
 - Records that still collide after this change are true duplicates (same type, start, end and length), and stay quarantined.
 - The 1,460 structural-variant keys on chr22 change format. `variant_key` (the record number) is unchanged, so no fact rows move.
 - A unit test checks the format on the 9 real structural variants in the slice.
+
+## Outcome
+
+On the full chr22 reload (code version `c5e9666`), both records load and 0 are quarantined: they were distinct structural variants. The 71 genotype rows they carry are now in `fct_genotype` (207,523,964 rows). The allele-count invariants hold with them included: 6,399,342 and 5,332,785 comparisons.

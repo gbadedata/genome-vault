@@ -1,10 +1,10 @@
-# BigQuery build on full chromosome 22 (2026-11-17T20:39:46+00:00)
+# BigQuery build on full chromosome 22 (2026-11-17T21:49:58+00:00)
 
-Project `genome-vault-202605`, dataset `gv`, location US.
+Project `genome-vault-202605`, dataset `gv`, location US, code version `c5e9666`.
 
 ## Load
 
-Run `20261117T203422Z` from `gs://genome-vault-202605-gv-data/runs/20261117T203422Z/parquet`.
+Run `20261117T212537Z` from `gs://genome-vault-202605-gv-data/runs/20261117T212537Z/parquet`.
 
 | Table | Parquet rows | BigQuery rows |
 |---|---:|---:|
@@ -13,38 +13,38 @@ Run `20261117T203422Z` from `gs://genome-vault-202605-gv-data/runs/20261117T2034
 | ensembl_genes | 1,747 | 1,747 |
 | genome_region_sources | 4 | 4 |
 | genome_regions | 124,292 | 124,292 |
-| kgp_genotypes | 207,523,893 | 207,523,893 |
-| kgp_quarantine | 2 | 2 |
+| kgp_genotypes | 207,523,964 | 207,523,964 |
+| kgp_quarantine | 0 | 0 |
 | kgp_samples | 3,202 | 3,202 |
 | kgp_samples_vcf | 3,202 | 3,202 |
-| kgp_variants | 1,066,555 | 1,066,555 |
+| kgp_variants | 1,066,557 | 1,066,557 |
 | load_runs | 4 | 4 |
 
 ## dbt build
 
-Statuses: {'success': 26, 'pass': 30}, 78.6 s, dbt 1.13.0b1.
+Statuses: {'success': 26, 'pass': 30}, 74.6 s, dbt 1.13.0b1.
 
 
 ## QC summary
 
 | Kind | Check | Passed | Detail |
 |---|---|---|---|
-| finding | share in GIAB difficult regions: hwe_departure | None | 93.6% of variants with the finding vs 40.9% of variants tested |
-| finding | variant-population pairs found in gnomAD | None | 4892150 of 5325475 |
-| finding | ClinVar pathogenic calls common in a population | None | 2 |
 | finding | frequency differences flagged against gnomAD (variant-population pairs) | None | 1718 |
-| finding | samples flagged by QC z-scores | None | 27 |
-| finding | HWE departures, exact p < threshold, unrelated (variant-population pairs) | None | 11345 |
+| finding | ClinVar pathogenic calls common in a population | None | 2 |
 | finding | share in GIAB difficult regions: common_but_absent_from_gnomad | None | 99.7% of variants with the finding vs 45% of variants tested |
+| finding | variant-population pairs found in gnomAD | None | 4892150 of 5325475 |
+| finding | samples flagged by QC z-scores (within population; within superpopulation) | None | 15; 27 |
 | finding | share in GIAB difficult regions: gnomad_af_discordant | None | 94.9% of variants with the finding vs 41.7% of variants tested |
-| invariant | genotype rows equal loader count | True | 207523893 |
-| invariant | allele counts reproduce source (unrelated) | True | 5332775 |
+| finding | share in GIAB difficult regions: hwe_departure | None | 93.6% of variants with the finding vs 40.9% of variants tested |
+| finding | HWE departures, exact p < threshold, unrelated (variant-population pairs) | None | 11345 |
+| invariant | genotype rows equal loader count | True | 207523964 |
 | invariant | every 1000G record loaded or quarantined | True | 1066557 |
-| invariant | REF alleles match GRCh38 | True | 1066555 |
+| invariant | allele counts reproduce source (unrelated) | True | 5332785 |
+| invariant | allele counts reproduce source (all samples) | True | 6399342 |
 | invariant | exact HWE test reproduces source HWE p-values | True | 5325475 |
+| invariant | REF alleles match GRCh38 | True | 1066557 |
+| invariant | variant rows equal records loaded | True | 1066557 |
 | invariant | gnomAD positions are 0-based (+1 matches best) | True | 190739 vs 7609 |
-| invariant | allele counts reproduce source (all samples) | True | 6399330 |
-| invariant | variant rows equal records loaded | True | 1066555 |
 
 ## Cost
 
@@ -77,8 +77,8 @@ Variants by region class:
 | Region class | Variants |
 |---|---|
 | not_difficult | 629,783 |
-| segmental_duplication | 187,757 |
-| tandem_repeat_or_homopolymer | 160,760 |
+| segmental_duplication | 187,758 |
+| tandem_repeat_or_homopolymer | 160,761 |
 | other_difficult | 57,793 |
 | low_mappability | 30,462 |
 
@@ -91,22 +91,27 @@ GIAB regions loaded (chr22):
 | segdup | 205 | 5,997,248 |
 | tandem_repeat_homopolymer | 57,258 | 5,653,447 |
 
-## Flagged samples by population
+## Flagged samples
+
+Flags use z-scores within each sample's population; superpopulation flags are shown for comparison.
+
+| Within population | Within superpopulation | Both | Superpopulation only | Population only |
+|---|---|---|---|---|
+| 15 | 27 | 13 | 14 | 2 |
+
+Flagged within population, by population:
 
 | Superpop. | Population | Samples | Ti/Tv | Het/hom | Non-ref sites | Mean het/hom z | Not in unrelated set |
 |---|---|---|---|---|---|---|---|
-| AFR | ASW | 8 | 0 | 1 | 7 | 0.9 | 0 |
-| AFR | ACB | 3 | 0 | 2 | 1 | 3.9 | 0 |
-| AMR | PUR | 3 | 0 | 0 | 3 | 1.1 | 1 |
-| SAS | PJL | 3 | 0 | 3 | 2 | -5.5 | 1 |
-| SAS | BEB | 2 | 0 | 2 | 1 | -4.7 | 0 |
-| SAS | STU | 2 | 0 | 2 | 2 | -5.3 | 0 |
-| EUR | GBR | 1 | 0 | 1 | 0 | -4.9 | 0 |
-| AFR | GWD | 1 | 0 | 1 | 0 | -4.7 | 0 |
-| EAS | CHS | 1 | 0 | 1 | 0 | -4.7 | 0 |
-| EAS | CDX | 1 | 0 | 1 | 1 | -4.3 | 0 |
-| EAS | KHV | 1 | 0 | 1 | 1 | -8.1 | 1 |
-| AFR | ESN | 1 | 0 | 1 | 0 | -6.3 | 0 |
+| SAS | PJL | 3 | 0 | 3 | 2 | -4.7 | 1 |
+| AFR | GWD | 2 | 0 | 1 | 1 | -4.7 | 1 |
+| SAS | BEB | 2 | 0 | 2 | 1 | -5.2 | 0 |
+| AMR | PUR | 2 | 0 | 1 | 1 | -1.4 | 0 |
+| SAS | STU | 2 | 0 | 2 | 1 | -4.6 | 0 |
+| EAS | CHS | 1 | 0 | 1 | 1 | -4.7 | 0 |
+| AFR | ESN | 1 | 0 | 1 | 1 | -6.9 | 0 |
+| EAS | KHV | 1 | 0 | 1 | 1 | -6.9 | 1 |
+| EAS | CDX | 1 | 0 | 0 | 1 | -4 | 0 |
 
 ## ClinVar pathogenic calls common in a population
 
@@ -119,8 +124,6 @@ GIAB regions loaded (chr22):
 
 | Record | Chrom | Pos | Ref | Alt | Source ID | Reason |
 |---|---|---|---|---|---|---|
-| 273,140 | chr22 | 22,857,056 | T | <DEL> | HGSV_245419 | DUPLICATE_VARIANT |
-| 1,038,198 | chr22 | 49,951,209 | G | <INS> | HGSV_248347 | DUPLICATE_VARIANT |
 
 ## Tables
 
@@ -128,15 +131,15 @@ GIAB regions loaded (chr22):
 |---|---|---:|---:|
 | dim_sample | TABLE | 3,202 | 0.0 |
 | dim_population | TABLE | 26 | 0.0 |
-| dim_variant | TABLE | 1,066,555 | 0.114 |
-| fct_genotype | TABLE | 207,523,893 | 6.433 |
+| dim_variant | TABLE | 1,066,557 | 0.114 |
+| fct_genotype | TABLE | 207,523,964 | 6.433 |
 | stg_gnomad | TABLE | 10,882,958 | 1.977 |
-| variant_population_freq | TABLE | 6,399,330 | 0.966 |
-| qc_allele_count_reconciliation | TABLE | 6,399,330 | 0.654 |
+| variant_population_freq | TABLE | 6,399,342 | 0.967 |
+| qc_allele_count_reconciliation | TABLE | 6,399,342 | 0.654 |
 | qc_hardy_weinberg | TABLE | 5,325,475 | 0.572 |
 | qc_sample | TABLE | 3,202 | 0.0 |
 | gnomad_concordance | TABLE | 5,325,475 | 0.491 |
 | clinvar_in_cohort | TABLE | 10,914 | 0.003 |
-| variant_context | TABLE | 1,066,555 | 0.033 |
+| variant_context | TABLE | 1,066,557 | 0.033 |
 | findings_by_region_class | TABLE | 15 | 0.0 |
 | qc_summary | TABLE | 16 | 0.0 |
