@@ -13,7 +13,8 @@ UCSC):
 Sources (all open data, no access restrictions):
 
 * 1000 Genomes 30x on GRCh38 (NYGC), phased SNV/INDEL/SV panel, chr22,
-  3,202 samples, plus the sample pedigree/population table.
+  3,202 samples, plus the sample pedigree/population table and the phase 3
+  list of 2,504 unrelated samples.
 * ClinVar GRCh38 VCF (NCBI), sliced to chromosome 22.
 * Ensembl GRCh38 gene annotation (GFF3) for chromosome 22.
 * UCSC hg38 chr22 reference sequence, for checking REF alleles.
@@ -46,6 +47,8 @@ import requests
 EBI = "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/"
 KGP_PANEL_DIR = EBI + "working/20220422_3202_phased_SNV_INDEL_SV/"
 KGP_SAMPLES = EBI + "20130606_g1k_3202_samples_ped_population.txt"
+# The 2,504 unrelated phase 3 samples: the set behind the panel's *_unrel counts.
+KGP_PHASE3_PANEL = "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/integrated_call_samples_v3.20130502.ALL.panel"
 CLINVAR = "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz"
 ENSEMBL_GFF3_DIR = "https://ftp.ensembl.org/pub/current_gff3/homo_sapiens/"
 UCSC_CHR22 = "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz"
@@ -268,6 +271,7 @@ def main() -> None:
     src["kgp_chr22_vcf"] = download(KGP_PANEL_DIR + kgp_vcf, FULL / kgp_vcf)
     src["kgp_chr22_tbi"] = download(KGP_PANEL_DIR + kgp_tbi, FULL / kgp_tbi)
     src["kgp_samples"] = download(KGP_SAMPLES, FULL / Path(KGP_SAMPLES).name)
+    src["kgp_phase3_panel"] = download(KGP_PHASE3_PANEL, FULL / Path(KGP_PHASE3_PANEL).name)
     src["clinvar_vcf"] = download(CLINVAR, FULL / "clinvar.vcf.gz")
     src["clinvar_tbi"] = download(CLINVAR + ".tbi", FULL / "clinvar.vcf.gz.tbi")
     src["ensembl_gff3"] = download(urljoin(ENSEMBL_GFF3_DIR, gff), FULL / gff)
@@ -297,6 +301,9 @@ def main() -> None:
     samples_dest = FIXTURES / Path(KGP_SAMPLES).name
     shutil.copyfile(FULL / Path(KGP_SAMPLES).name, samples_dest)
     fx["kgp_samples"] = {"path": str(samples_dest.relative_to(ROOT)), "sha256": sha256(samples_dest)}
+    panel_dest = FIXTURES / Path(KGP_PHASE3_PANEL).name
+    shutil.copyfile(FULL / Path(KGP_PHASE3_PANEL).name, panel_dest)
+    fx["kgp_phase3_panel"] = {"path": str(panel_dest.relative_to(ROOT)), "sha256": sha256(panel_dest)}
     genes_all = FULL / "ensembl_genes_22.gff3.gz"
     fx["ensembl_genes_chr22_all"] = {"path": str(genes_all.relative_to(ROOT)), "count": slice_gff3(FULL / gff, genes_all, "22")}
 

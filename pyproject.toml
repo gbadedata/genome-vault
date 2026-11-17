@@ -13,65 +13,44 @@ build-backend = "hatchling.build"
 [project]
 name = "genome-vault"
 version = "0.1.0"
-description = "Genomic variant warehouse on Google Cloud with BigQuery, Dataflow, and Django."
+description = "Genomic variant warehouse built from real 1000 Genomes, ClinVar, Ensembl and gnomAD data: BigQuery and dbt on Google Cloud, DuckDB locally."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [
   { name = "Gbade Odimayo" },
 ]
-keywords = ["bioinformatics", "genomics", "bigquery", "dataflow", "gcp"]
+keywords = ["bioinformatics", "genomics", "bigquery", "dbt", "gcp", "1000-genomes", "clinvar", "gnomad"]
 
 dependencies = [
-  # Core
-  "pydantic >= 2.7,<3.0",
-  "pydantic-settings >= 2.3,<3.0",
-  "structlog >= 24.1,<26.0",
   "click >= 8.1,<9.0",
-
-  # GCP SDKs
-  "google-cloud-bigquery >= 3.21,<4.0",
-  "google-cloud-storage >= 2.16,<3.0",
-  "google-auth >= 2.30,<3.0",
-
-  # Genomic data handling
-  "pysam >= 0.22,<1.0",  # VCF/BAM parsing — the de facto standard
-
-  # Resilience
-  "tenacity >= 8.5,<10.0",
+  "cyvcf2 >= 0.31,<1.0",      # fast genotype arrays for 3,202-sample VCFs
+  "numpy >= 1.26",
+  "pyarrow >= 15.0",
+  "pysam >= 0.22,<1.0",       # slicing and indexing in scripts/fetch_sources.py
+  "requests >= 2.31,<3.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-  # Test
   "pytest >= 8.2,<9.0",
   "pytest-cov >= 5.0,<7.0",
-  "pytest-mock >= 3.14,<4.0",
-  "pytest-asyncio >= 0.23,<2.0",
-  "pytest-timeout >= 2.3,<3.0",
-
-  # Lint / format / type-check
   "ruff >= 0.5,<1.0",
-  "mypy >= 1.10,<2.0",
-
-  # Pre-commit framework
-  "pre-commit >= 3.7,<5.0",
-  "detect-secrets >= 1.5,<2.0",
-
-  # Type stubs
-  "types-requests",
+  "duckdb >= 1.1",
+  "dbt-duckdb >= 1.8,<2.0",
 ]
-
+cloud = [
+  "google-cloud-bigquery >= 3.21,<4.0",
+  "google-cloud-storage >= 2.16,<4.0",
+  "dbt-bigquery >= 1.8,<2.0",
+]
 api = [
-  "Django >= 5.0,<6.0",
-  "djangorestframework >= 3.15,<4.0",
-  "django-environ >= 0.11,<1.0",
-  "gunicorn >= 22.0,<24.0",
+  "fastapi >= 0.110",
+  "uvicorn >= 0.29",
 ]
 
-dataflow = [
-  "apache-beam[gcp] >= 2.57,<3.0",
-]
+[project.scripts]
+genome-vault = "genome_vault.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/gbadedata/genome-vault"
@@ -152,7 +131,8 @@ exclude = [
 [[tool.mypy.overrides]]
 module = [
   "pysam.*",
-  "apache_beam.*",
+  "cyvcf2.*",
+  "pyarrow.*",
 ]
 ignore_missing_imports = true
 
@@ -169,7 +149,7 @@ addopts = [
   "--cov=genome_vault",
   "--cov-report=term-missing",
   "--cov-report=xml",
-  "--cov-fail-under=70",
+  "--cov-fail-under=80",
   "-v",
 ]
 markers = [
@@ -177,8 +157,6 @@ markers = [
   "integration: tests requiring GCP credentials or external services",
   "slow: tests >5 seconds",
 ]
-asyncio_mode = "auto"
-timeout = 60
 
 # -----------------------------------------------------------------------------
 # Coverage
