@@ -59,7 +59,7 @@ expanded as (
         cast((c.n_minor - h) / 2 as {{ dbt.type_bigint() }}) as n_minor_hom,
         c.n - h - cast((c.n_minor - h) / 2 as {{ dbt.type_bigint() }}) as n_major_hom
     from with_const as c
-    {{ cross_join_step2('mod(c.n_minor, 2)', 'c.n_minor') }}
+    {{ cross_join_series('mod(c.n_minor, 2)', 'c.n_minor', 2, 'h') }}
 ),
 
 log_probs as (

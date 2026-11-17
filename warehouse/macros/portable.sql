@@ -15,11 +15,16 @@
   {%- endif -%}
 {%- endmacro %}
 
-{# Joins every row to h = start, start+2, ..., stop (a column named h). #}
-{% macro cross_join_step2(start, stop) -%}
+{# Joins every row to alias = start, start+step, ..., stop (inclusive). #}
+{% macro cross_join_series(start, stop, step, alias) -%}
   {%- if target.type == 'bigquery' -%}
-    cross join unnest(generate_array({{ start }}, {{ stop }}, 2)) as h
+    cross join unnest(generate_array({{ start }}, {{ stop }}, {{ step }})) as {{ alias }}
   {%- else -%}
-    cross join lateral (select unnest(range({{ start }}, {{ stop }} + 1, 2)) as h) as h_series
+    cross join lateral (select unnest(range({{ start }}, {{ stop }} + 1, {{ step }})) as {{ alias }}) as {{ alias }}_series
   {%- endif -%}
+{%- endmacro %}
+
+{# 0-based index of the fixed-width genomic window that holds pos. #}
+{% macro window_of(pos, width) -%}
+  cast(floor(({{ pos }}) / {{ width }}) as {{ dbt.type_bigint() }})
 {%- endmacro %}

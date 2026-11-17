@@ -10,7 +10,7 @@ clean-targets: ["target", "dbt_packages"]
 
 vars:
   contig: chr22
-  # HWE: chi-square (1 df) above this is p < 1e-6
+  # HWE: exact-test p below this (unrelated samples) counts as a departure
   hwe_p_threshold: 1.0e-6
   max_alleles: 10000          # log-factorial table size; must cover 2 x the largest population
   # gnomAD concordance: flag |AF difference| above this, where both sides
@@ -31,3 +31,8 @@ models:
 
 flags:
   send_anonymous_usage_stats: false
+
+# On BigQuery, dbt's query comment also becomes job labels, so the evidence
+# script can find this run's jobs and report the bytes they billed.
+query-comment:
+  job-label: true

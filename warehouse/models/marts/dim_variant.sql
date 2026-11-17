@@ -1,19 +1,45 @@
 -- One row per loaded 1000 Genomes variant, with the Ensembl genes it overlaps
 -- and its ClinVar record (joined on chrom, pos, ref, alt: the panel has no rsIDs).
-with genes as (
-    select
-        v.variant_key,
-        string_agg(coalesce(g.gene_symbol, g.gene_id), '|' order by coalesce(g.gene_symbol, g.gene_id)) as gene_symbols,
-        max(case when g.biotype = 'protein_coding' then 1 else 0 end) = 1 as in_protein_coding_gene
+--
+-- Gene overlap is an interval join. Joining on chromosome alone compares every
+-- variant with every gene (about 1.9 billion pairs on chr22, all on one join
+-- key), so both sides are first split into 100 kb windows and joined on
+-- (chrom, window); the exact overlap test then runs within each window.
+{% set window = 100000 %}
+with variant_windows as (
+    select v.variant_key, v.chrom, v.pos, v.end_pos, w
     from {{ ref('stg_kgp_variants') }} as v
-    join {{ ref('stg_genes') }} as g
-        on g.chrom = v.chrom and g.gene_start <= v.end_pos and g.gene_end >= v.pos
-    group by v.variant_key
+    {{ cross_join_series(window_of('v.pos', window), window_of('v.end_pos', window), 1, 'w') }}
+),
+
+gene_windows as (
+    select g.gene_id, g.gene_symbol, g.biotype, g.chrom, g.gene_start, g.gene_end, w
+    from {{ ref('stg_genes') }} as g
+    {{ cross_join_series(window_of('g.gene_start', window), window_of('g.gene_end', window), 1, 'w') }}
+),
+
+-- A long variant and a long gene can share several windows: keep each pair once.
+variant_gene_pairs as (
+    select distinct vw.variant_key, gw.gene_id, gw.gene_symbol, gw.biotype
+    from variant_windows as vw
+    join gene_windows as gw
+        on gw.chrom = vw.chrom and gw.w = vw.w
+        and gw.gene_start <= vw.end_pos and gw.gene_end >= vw.pos
+),
+
+genes as (
+    select
+        variant_key,
+        string_agg(coalesce(gene_symbol, gene_id), '|' order by coalesce(gene_symbol, gene_id)) as gene_symbols,
+        max(case when biotype = 'protein_coding' then 1 else 0 end) = 1 as in_protein_coding_gene
+    from variant_gene_pairs
+    group by variant_key
 ),
 
 clinvar as (
     select *
     from {{ ref('stg_clinvar') }}
+    where true  -- BigQuery has required WHERE, GROUP BY or HAVING alongside QUALIFY
     qualify row_number() over (partition by variant_id order by clinvar_variation_id) = 1
 )
 

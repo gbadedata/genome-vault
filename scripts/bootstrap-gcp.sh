@@ -45,15 +45,13 @@ PROJECT_ID="genome-vault-202605"
 PROJECT_NAME="genome-vault"
 BILLING_ACCOUNT_ID="018548-DE72C7-6EAF1D"
 REGION="europe-west2"
-BQ_LOCATION="EU"
+TFSTATE_LOCATION="EU"   # where the existing Terraform state bucket lives (data is in US; see terraform.tfvars)
 TFSTATE_BUCKET="${PROJECT_ID}-tfstate"
 
 # APIs required for the platform
 REQUIRED_APIS=(
   "bigquery.googleapis.com"
   "storage.googleapis.com"
-  "dataflow.googleapis.com"
-  "compute.googleapis.com"
   "iam.googleapis.com"
   "cloudbilling.googleapis.com"
   "billingbudgets.googleapis.com"
@@ -137,8 +135,8 @@ heading "Step 4 — Terraform state bucket"
 if gsutil ls -b "gs://${TFSTATE_BUCKET}" >/dev/null 2>&1; then
   ok "Bucket gs://${TFSTATE_BUCKET} already exists"
 else
-  info "Creating bucket gs://${TFSTATE_BUCKET} in ${BQ_LOCATION}..."
-  gsutil mb -p "$PROJECT_ID" -l "$BQ_LOCATION" "gs://${TFSTATE_BUCKET}"
+  info "Creating bucket gs://${TFSTATE_BUCKET} in ${TFSTATE_LOCATION}..."
+  gsutil mb -p "$PROJECT_ID" -l "$TFSTATE_LOCATION" "gs://${TFSTATE_BUCKET}"
   ok "Created bucket gs://${TFSTATE_BUCKET}"
 fi
 
@@ -184,10 +182,10 @@ Resource              Value
 GCP Project ID        $PROJECT_ID
 Billing Account       $BILLING_ACCOUNT_ID
 Region                $REGION
-BigQuery Location     $BQ_LOCATION
+State bucket location $TFSTATE_LOCATION
 Terraform State       gs://${TFSTATE_BUCKET}
 
-APIs Enabled          ${#REQUIRED_APIS[@]} APIs (bigquery, storage, dataflow, run, ...)
+APIs Enabled          ${#REQUIRED_APIS[@]} APIs (bigquery, storage, run, ...)
 
 Next steps:
 
