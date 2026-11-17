@@ -33,3 +33,9 @@ The warehouse answers analytical questions in SQL. People also want quick lookup
 - The serving table must be rebuilt (`dbt build`) before a deployment sees new data. The cache lasts for the life of the process, which is right for data that changes only on a build.
 - The rate limit and daily budget reset when Cloud Run replaces the instance. The per-query cap and the billing alert still apply.
 - While building this, the warehouse found it had been computing ratios in 4-byte floats on DuckDB (`dbt.type_float()`) and 8-byte on BigQuery. Both now use double precision (`float_type()` in `macros/portable.sql`).
+
+## Outcome
+
+- **The first deployment failed.** Every `api_variant` query returned 500, while the small tables worked. BigQuery checks `maximum_bytes_billed` against its pre-run estimate, and for a clustered table that estimate is the full-table upper bound, because cluster pruning happens only during execution. A one-row lookup was therefore refused by the 200 MB cap.
+- **The fix.** `api_variant` is now integer-range partitioned on `pos` (100 kb, 510 partitions) as well as clustered, and the estimate reflects partition pruning. rsID lookups go through the small `api_rsid` table.
+- **The live smoke test after the fix:** 15 of 15 checks pass; 147 MB billed for 13 BigQuery queries (BigQuery's 10 MB minimum per table read); 1-3 s for a first lookup and about 140 ms from the cache. URL: https://genome-vault-api-guovahumxq-nw.a.run.app

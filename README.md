@@ -9,7 +9,7 @@
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![dbt](https://img.shields.io/badge/dbt-DuckDB%20%7C%20BigQuery-orange.svg)](warehouse/)
 
-[Results](#results) · [How the numbers are checked](#how-the-numbers-are-checked) · [What the findings are](#what-the-findings-are) · [API](#api) · [Architecture](#architecture) · [Run it](#run-it) · [Decisions](docs/adr/README.md)
+[Live API](https://genome-vault-api-guovahumxq-nw.a.run.app/docs) · [Results](#results) · [How the numbers are checked](#how-the-numbers-are-checked) · [What the findings are](#what-the-findings-are) · [API](#api) · [Architecture](#architecture) · [Run it](#run-it) · [Decisions](docs/adr/README.md)
 
 </div>
 
@@ -34,9 +34,10 @@ From the full chromosome 22 build on BigQuery ([evidence](docs/evidence/bigquery
 | Genotype rows (non-reference calls) | **207,523,964**, 6.1% of the dense 3.42 billion matrix |
 | REF alleles checked against GRCh38 | **1,066,557 of 1,066,557** match |
 | ClinVar chr22 records | 100,013: 99,961 loaded, 52 quarantined (no ALT allele) |
-| dbt models and tests on BigQuery | **56 of 56 pass** (26 models, 30 tests); 75 s for the build |
+| dbt models and tests on BigQuery | **69 of 69 pass** (30 models, 39 tests); 87 s for the build |
 | Loader, full chromosome on a laptop | 337 s |
-| BigQuery cost of a full build | 26.5 GB billed over 56 queries; largest single query 5.2 GB (every query is capped at 20 GB) |
+| BigQuery cost of a full build | 27.3 GB billed over 69 queries; largest single query 5.2 GB (every query is capped at 20 GB) |
+| Live API | 15 of 15 smoke checks; about 10 MB of BigQuery per lookup ([below](#api)) |
 
 ## How the numbers are checked
 
@@ -97,7 +98,9 @@ A frequency that high in a reference population is a standard prompt to review a
 
 ## API
 
-A read-only FastAPI service serves lookups from the warehouse ([ADR-015](docs/adr/015-read-only-api-on-cloud-run.md)).
+**Live:** https://genome-vault-api-guovahumxq-nw.a.run.app (interactive docs at [`/docs`](https://genome-vault-api-guovahumxq-nw.a.run.app/docs)).
+
+A read-only FastAPI service on Cloud Run serves lookups from the full chr22 warehouse in BigQuery ([ADR-015](docs/adr/015-read-only-api-on-cloud-run.md)).
 
 | Endpoint | Returns |
 |---|---|
@@ -109,11 +112,40 @@ A read-only FastAPI service serves lookups from the warehouse ([ADR-015](docs/ad
 | `GET /qc/summary`, `GET /qc/findings-by-region` | The invariants and findings above |
 
 ```bash
-make slice && make api          # then open http://127.0.0.1:8000/docs
-curl -s 127.0.0.1:8000/variants/chr22:42058350:G:A
+curl https://genome-vault-api-guovahumxq-nw.a.run.app/variants/chr22:42058350:G:A
 ```
 
-Every variant query filters on chromosome and position, so on BigQuery it reads a few blocks of the clustered `api_variant` serving table, not the table. The service runs as a service account that can only read the `gv` dataset. Each query is capped at 200 MB, and the service at 25 GB of BigQuery a day, which keeps a month of maximum use inside BigQuery's free tier. Each IP gets 60 requests a minute. `bash scripts/deploy_api.sh` builds the image with Cloud Build, deploys it with Terraform, and smoke-tests every endpoint on the live URL.
+```json
+{
+  "variant_id": "chr22:42058350:G:A",
+  "class": "SNV",
+  "genes": ["NAGA", "WBP2NL"],
+  "region": {"class": "not_difficult", "segmental_duplication": false, "low_mappability": false, "...": "..."},
+  "frequencies": {
+    "basis": "2,504 unrelated phase 3 samples",
+    "ALL": {"af": 0.6459664536741214},
+    "AFR": {"af": 0.4629349470499244, "gnomad_af": 0.498017, "hwe_p_unrelated": 0.5313474125193661},
+    "EUR": {"af": 0.668986083499006, "gnomad_af": 0.675129, "hwe_p_unrelated": 0.10849407915124708},
+    "...": "AMR, EAS, SAS"
+  },
+  "gnomad_v3": {"found": true, "filter": "PASS", "alleles_at_site": 1},
+  "qc": {"hwe_departure": false, "gnomad_af_discordant": false},
+  "clinvar": {"rsid": "rs5758566", "clinical_significance": "Benign", "review_status": "criteria_provided,_multiple_submitters,_no_conflicts"}
+}
+```
+
+**Measured on the live service** ([smoke test](docs/evidence/api_smoke.json), 15 of 15 checks):
+- **Cost:** 147 MB of BigQuery for the 13 checks that query it, about 10 MB each, which is BigQuery's minimum charge per table read.
+- **Speed:** 1-3 s for a first lookup; about 140 ms from the cache.
+- **Structural-variant keys:** the two deletions at chr22:22,857,056 that the old key merged come back as separate variants (36.7 kb and 47.9 kb).
+
+How it stays cheap and safe:
+- **One partition per lookup.** Every variant query filters on position, so it reads one 100 kb partition of the `api_variant` serving table. Partitioning, not just clustering, is what makes that work under a cost cap: BigQuery checks a query's byte limit against its pre-run estimate, which accounts for partitions but not for clustering. The first deployment, clustered only, had every lookup refused, and the smoke test caught it.
+- **Read-only access.** The service account can only read the `gv` dataset.
+- **Hard caps.** Each query is capped at 200 MB, and the service at 25 GB of BigQuery a day, which keeps a month of maximum use inside BigQuery's free tier. Each IP gets 60 requests a minute.
+- **Repeatable deploys.** `bash scripts/deploy_api.sh` builds the image with Cloud Build, deploys with Terraform and reruns the smoke test.
+
+Locally, against the DuckDB warehouse: `make slice && make api`, then open http://127.0.0.1:8000/docs.
 
 ## Architecture
 
