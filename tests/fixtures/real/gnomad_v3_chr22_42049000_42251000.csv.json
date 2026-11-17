@@ -1,0 +1,8 @@
+{
+  "table": "bigquery-public-data.gnomAD.v3_genomes__chr22",
+  "path": "tests/fixtures/real/gnomad_v3_chr22_42049000_42251000.csv",
+  "rows": 56927,
+  "scanned_gb": 0.01,
+  "sha256": "7b7bca7386782fe8a316259ebf7a12f2a3e67f0a61758b151e6e6c7e8384d985",
+  "retrieved_at": "2026-11-17T18:33:37+00:00"
+}

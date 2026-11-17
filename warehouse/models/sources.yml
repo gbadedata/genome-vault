@@ -1,0 +1,37 @@
+version: 2
+
+sources:
+  - name: raw
+    description: >
+      Tables written by `genome-vault load` from the real public sources. On
+      DuckDB they are read straight from the Parquet directories; on BigQuery
+      they are loaded into the raw dataset first (scripts/load_bigquery.sh).
+    schema: "{{ var('raw_dataset', 'gv_raw') }}"
+    meta:
+      external_location: "{{ env_var('GV_PARQUET', '../data/work/parquet') }}/{name}/*.parquet"
+    tables:
+      - name: kgp_variants
+        description: One row per 1000 Genomes record loaded, with the source's own AC/AN kept for reconciliation.
+      - name: kgp_genotypes
+        description: "Sparse genotypes: non-reference or missing calls only (gt 1 het, 2 hom-alt, -1 missing)."
+      - name: kgp_samples_vcf
+      - name: kgp_samples
+      - name: kgp_quarantine
+      - name: clinvar_variants
+      - name: clinvar_quarantine
+      - name: ensembl_genes
+      - name: load_runs
+
+  - name: gnomad_public
+    description: gnomAD v3 genomes (GRCh38) in BigQuery's public datasets. US location; start_position is 0-based.
+    database: bigquery-public-data
+    schema: gnomAD
+    tables:
+      - name: v3_genomes__chr22
+
+  - name: gnomad_fixture
+    description: The same gnomAD columns for the development region, extracted by scripts/fetch_gnomad_region.sh (DuckDB only).
+    meta:
+      external_location: "{{ env_var('GV_GNOMAD_CSV', '../tests/fixtures/real/gnomad_v3_chr22_42049000_42251000.csv') }}"
+    tables:
+      - name: gnomad_v3_region

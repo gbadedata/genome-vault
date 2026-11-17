@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  - name: dim_sample
+    description: Samples in VCF order with pedigree, population and the phase 3 unrelated flag.
+    columns:
+      - name: sample_index
+        data_tests: [unique, not_null]
+      - name: sample_id
+        data_tests: [unique, not_null]
+      - name: superpopulation
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: {values: ['AFR', 'AMR', 'EAS', 'EUR', 'SAS']}
+
+  - name: dim_variant
+    description: One row per loaded variant, with overlapping Ensembl genes and ClinVar.
+    columns:
+      - name: variant_key
+        data_tests: [unique, not_null]
+      - name: variant_id
+        data_tests: [unique, not_null]
+      - name: variant_class
+        data_tests:
+          - accepted_values:
+              arguments: {values: ['SNV', 'MNV', 'INDEL', 'SV']}
+      - name: ref_check
+        data_tests:
+          - accepted_values:
+              arguments: {values: ['match', 'unchecked']}
+
+  - name: fct_genotype
+    description: Sparse genotypes (non-reference or missing calls).
+    columns:
+      - name: variant_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_variant'), field: variant_key}
+      - name: sample_index
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_sample'), field: sample_index}
+      - name: gt
+        data_tests:
+          - accepted_values:
+              arguments: {values: [1, 2, -1], quote: false}
+
+  - name: variant_population_freq
+    columns:
+      - name: af
+        data_tests: [not_null]
+
+  - name: qc_hardy_weinberg
+    description: Exact HWE test per variant and superpopulation (all samples, and unrelated samples).
+    columns:
+      - name: hwe_p_unrel
+        data_tests: [not_null]
+
+  - name: qc_summary
+    description: Invariants (must pass) and findings, one row per check.
