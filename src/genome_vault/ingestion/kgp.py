@@ -155,7 +155,9 @@ def load_kgp(
             ref_check = reference.check_ref(chrom, v.POS, v.REF)
             if ref_check == "mismatch":
                 reason = al.REF_MISMATCH
-        vid = al.variant_id(chrom, v.POS, v.REF, alt_text)
+        info = v.INFO
+        end, sv_len = _int(info.get("END")), _int(info.get("SVLEN"))
+        vid = al.variant_id(chrom, v.POS, v.REF, alt_text, end=end, sv_len=sv_len)
         if reason is None and vid in seen:
             reason = al.DUPLICATE_VARIANT
 
@@ -170,18 +172,17 @@ def load_kgp(
         seen.add(vid)
         alt = alts[0]  # check_alleles guarantees exactly one
         vclass, sv_type = al.classify(v.REF, alt)
-        info = v.INFO
         row: dict[str, Any] = {
             "variant_key": record_number,
             "variant_id": vid,
             "chrom": chrom,
             "pos": v.POS,
-            "end_pos": _int(info.get("END")) if vclass == "SV" and info.get("END") else v.POS + len(v.REF) - 1,
+            "end_pos": end if vclass == "SV" and end is not None else v.POS + len(v.REF) - 1,
             "ref": v.REF,
             "alt": alt,
             "variant_class": vclass,
             "sv_type": sv_type,
-            "sv_len": _int(info.get("SVLEN")),
+            "sv_len": sv_len,
             "is_transition": al.is_transition(v.REF, alt) if vclass == "SNV" else None,
             "ref_check": ref_check,
             "source_id": v.ID,

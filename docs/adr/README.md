@@ -17,3 +17,4 @@ Each ADR records one decision: the context, what was chosen, what was rejected a
 | [ADR-011](011-us-location-and-cost-guards.md) | US location for every dataset, and hard cost guards | Accepted |
 | [ADR-012](012-real-data-only.md) | Real public data only, with a development slice cut from it | Accepted |
 | [ADR-013](013-exact-hwe-on-unrelated-samples.md) | Exact Hardy-Weinberg test, on the 2,504 unrelated samples | Accepted |
+| [ADR-014](014-structural-variant-identity.md) | Structural-variant identity includes END and SVLEN | Accepted |

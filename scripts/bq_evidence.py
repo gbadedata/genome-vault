@@ -92,6 +92,14 @@ def main() -> None:
                    sum(case when is_unrelated then 0 else 1 end) as outside_unrelated_set
             from {ds}.qc_sample where flagged
             group by superpopulation, population order by samples desc""",
+        "sample_flags_compared": f"""
+            select
+                sum(case when flagged then 1 else 0 end) as within_population,
+                sum(case when flagged_by_superpop then 1 else 0 end) as within_superpopulation,
+                sum(case when flagged and flagged_by_superpop then 1 else 0 end) as both,
+                sum(case when flagged_by_superpop and not flagged then 1 else 0 end) as superpopulation_only,
+                sum(case when flagged and not flagged_by_superpop then 1 else 0 end) as population_only
+            from {ds}.qc_sample""",
         "clinvar_common_pathogenic": f"""
             select variant_id, rsid, gene_symbols, clinical_significance, clinvar_review_status,
                    max_pop, round(max_pop_af, 4) as max_pop_af
@@ -203,7 +211,12 @@ def render(e: dict) -> str:
     lines += ["GIAB regions loaded (chr22):", ""]
     lines += table(f.get("region_sources"), [
         ("stratification", "Stratification"), ("intervals_merged", "Intervals"), ("bases", "Bases")])
-    lines += ["## Flagged samples by population", ""]
+    lines += ["## Flagged samples", "",
+              "Flags use z-scores within each sample's population; superpopulation flags are shown for comparison.", ""]
+    lines += table(f.get("sample_flags_compared"), [
+        ("within_population", "Within population"), ("within_superpopulation", "Within superpopulation"),
+        ("both", "Both"), ("superpopulation_only", "Superpopulation only"), ("population_only", "Population only")])
+    lines += ["Flagged within population, by population:", ""]
     lines += table(f.get("flagged_samples_by_population"), [
         ("superpopulation", "Superpop."), ("population", "Population"), ("samples", "Samples"),
         ("on_ti_tv", "Ti/Tv"), ("on_het_hom", "Het/hom"), ("on_non_ref_sites", "Non-ref sites"),
