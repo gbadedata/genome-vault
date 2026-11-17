@@ -7,8 +7,9 @@ sources:
       DuckDB they are read straight from the Parquet directories; on BigQuery
       they are loaded into the raw dataset first (scripts/load_bigquery.sh).
     schema: "{{ var('raw_dataset', 'gv_raw') }}"
-    meta:
-      external_location: "{{ env_var('GV_PARQUET', '../data/work/parquet') }}/{name}/*.parquet"
+    config:
+      meta:
+        external_location: "{{ env_var('GV_PARQUET', '../data/work/parquet') }}/{name}/*.parquet"
     tables:
       - name: kgp_variants
         description: One row per 1000 Genomes record loaded, with the source's own AC/AN kept for reconciliation.
@@ -31,7 +32,8 @@ sources:
 
   - name: gnomad_fixture
     description: The same gnomAD columns for the development region, extracted by scripts/fetch_gnomad_region.sh (DuckDB only).
-    meta:
-      external_location: "{{ env_var('GV_GNOMAD_CSV', '../tests/fixtures/real/gnomad_v3_chr22_42049000_42251000.csv') }}"
+    config:
+      meta:
+        external_location: "{{ env_var('GV_GNOMAD_CSV', '../tests/fixtures/real/gnomad_v3_chr22_42049000_42251000.csv') }}"
     tables:
       - name: gnomad_v3_region

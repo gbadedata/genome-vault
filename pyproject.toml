@@ -37,11 +37,13 @@ dev = [
   "pytest-cov >= 5.0,<7.0",
   "ruff >= 0.5,<1.0",
   "duckdb >= 1.1",
+  "dbt-core >= 1.10,<1.13",   # stable releases only: <1.13 also excludes 1.13 betas
   "dbt-duckdb >= 1.8,<2.0",
 ]
 cloud = [
   "google-cloud-bigquery >= 3.21,<4.0",
   "google-cloud-storage >= 2.16,<4.0",
+  "dbt-core >= 1.10,<1.13",
   "dbt-bigquery >= 1.8,<2.0",
 ]
 api = [

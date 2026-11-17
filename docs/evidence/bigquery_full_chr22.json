@@ -1,0 +1,331 @@
+{
+  "generated_at": "2026-11-17T20:08:33+00:00",
+  "project": "genome-vault-202605",
+  "dataset": "gv",
+  "dbt": {
+    "invocation_id": "583dc572-1b3d-4111-b463-028bdd882771",
+    "dbt_version": "1.13.0b1",
+    "elapsed_seconds": 64.8,
+    "statuses": {
+      "success": 22,
+      "pass": 22
+    },
+    "not_passing": []
+  },
+  "qc_summary": [
+    {
+      "kind": "finding",
+      "check_name": "ClinVar pathogenic calls common in a population",
+      "passed": null,
+      "detail": "2"
+    },
+    {
+      "kind": "finding",
+      "check_name": "variant-population pairs found in gnomAD",
+      "passed": null,
+      "detail": "4892150 of 5325475"
+    },
+    {
+      "kind": "finding",
+      "check_name": "frequency differences flagged against gnomAD",
+      "passed": null,
+      "detail": "1718"
+    },
+    {
+      "kind": "finding",
+      "check_name": "samples flagged by QC z-scores",
+      "passed": null,
+      "detail": "27"
+    },
+    {
+      "kind": "finding",
+      "check_name": "HWE departures (exact p < threshold, unrelated)",
+      "passed": null,
+      "detail": "11345"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "gnomAD positions are 0-based (+1 matches best)",
+      "passed": true,
+      "detail": "190739 vs 7609"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "allele counts reproduce source (unrelated)",
+      "passed": true,
+      "detail": "5332775"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "genotype rows equal loader count",
+      "passed": true,
+      "detail": "207523893"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "exact HWE test reproduces source HWE p-values",
+      "passed": true,
+      "detail": "5325475"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "every 1000G record loaded or quarantined",
+      "passed": true,
+      "detail": "1066557"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "REF alleles match GRCh38",
+      "passed": true,
+      "detail": "1066555"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "allele counts reproduce source (all samples)",
+      "passed": true,
+      "detail": "6399330"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "variant rows equal records loaded",
+      "passed": true,
+      "detail": "1066555"
+    }
+  ],
+  "tables": {
+    "dim_sample": {
+      "type": "TABLE",
+      "rows": 3202,
+      "gb": 0.0
+    },
+    "dim_population": {
+      "type": "TABLE",
+      "rows": 26,
+      "gb": 0.0
+    },
+    "dim_variant": {
+      "type": "TABLE",
+      "rows": 1066555,
+      "gb": 0.114
+    },
+    "fct_genotype": {
+      "type": "TABLE",
+      "rows": 207523893,
+      "gb": 6.433
+    },
+    "stg_gnomad": {
+      "type": "TABLE",
+      "rows": 10882958,
+      "gb": 1.977
+    },
+    "variant_population_freq": {
+      "type": "TABLE",
+      "rows": 6399330,
+      "gb": 0.966
+    },
+    "qc_allele_count_reconciliation": {
+      "type": "TABLE",
+      "rows": 6399330,
+      "gb": 0.654
+    },
+    "qc_hardy_weinberg": {
+      "type": "TABLE",
+      "rows": 5325475,
+      "gb": 0.572
+    },
+    "qc_sample": {
+      "type": "TABLE",
+      "rows": 3202,
+      "gb": 0.0
+    },
+    "gnomad_concordance": {
+      "type": "TABLE",
+      "rows": 5325475,
+      "gb": 0.491
+    },
+    "clinvar_in_cohort": {
+      "type": "TABLE",
+      "rows": 10914,
+      "gb": 0.003
+    },
+    "qc_summary": {
+      "type": "TABLE",
+      "rows": 13,
+      "gb": 0.0
+    }
+  },
+  "bigquery_jobs": {
+    "count": 44,
+    "gb_processed": 26.084,
+    "gb_billed": 26.229,
+    "largest_single_query_gb_billed": 5.188,
+    "errors": [],
+    "top_by_bytes_billed": [
+      {
+        "node_id": "model_genome_vault_fct_genotype",
+        "gb_billed": 5.188,
+        "seconds": 5.197
+      },
+      {
+        "node_id": "model_genome_vault_qc_sample",
+        "gb_billed": 4.996,
+        "seconds": 2.224
+      },
+      {
+        "node_id": "model_genome_vault_variant_population_freq",
+        "gb_billed": 4.602,
+        "seconds": 3.311
+      },
+      {
+        "node_id": "model_genome_vault_stg_gnomad",
+        "gb_billed": 1.892,
+        "seconds": 12.289
+      },
+      {
+        "node_id": "test_genome_vault_relationships_fct_genotype_variant_key__varia",
+        "gb_billed": 1.669,
+        "seconds": 0.573
+      },
+      {
+        "node_id": "test_genome_vault_accepted_values_fct_genotype_gt__false__1__2_",
+        "gb_billed": 1.661,
+        "seconds": 0.316
+      },
+      {
+        "node_id": "test_genome_vault_relationships_fct_genotype_sample_index__samp",
+        "gb_billed": 1.661,
+        "seconds": 0.366
+      },
+      {
+        "node_id": "model_genome_vault_gnomad_concordance",
+        "gb_billed": 1.653,
+        "seconds": 3.948
+      }
+    ]
+  },
+  "load": {
+    "run_id": "20261117T195041Z",
+    "loaded_at": "2026-11-17T20:07:01+00:00",
+    "project": "genome-vault-202605",
+    "dataset": "gv_raw",
+    "gcs_prefix": "gs://genome-vault-202605-gv-data/runs/20261117T195041Z/parquet",
+    "tables": {
+      "clinvar_quarantine": {
+        "parquet_rows": 52,
+        "bigquery_rows": 52,
+        "bigquery_bytes": 3128
+      },
+      "clinvar_variants": {
+        "parquet_rows": 99961,
+        "bigquery_rows": 99961,
+        "bigquery_bytes": 24083596
+      },
+      "ensembl_genes": {
+        "parquet_rows": 1747,
+        "bigquery_rows": 1747,
+        "bigquery_bytes": 125772
+      },
+      "kgp_genotypes": {
+        "parquet_rows": 207523893,
+        "bigquery_rows": 207523893,
+        "bigquery_bytes": 5188097325
+      },
+      "kgp_quarantine": {
+        "parquet_rows": 2,
+        "bigquery_rows": 2,
+        "bigquery_bytes": 178
+      },
+      "kgp_samples": {
+        "parquet_rows": 3202,
+        "bigquery_rows": 3202,
+        "bigquery_bytes": 123479
+      },
+      "kgp_samples_vcf": {
+        "parquet_rows": 3202,
+        "bigquery_rows": 3202,
+        "bigquery_bytes": 54434
+      },
+      "kgp_variants": {
+        "parquet_rows": 1066555,
+        "bigquery_rows": 1066555,
+        "bigquery_bytes": 340349637
+      },
+      "load_runs": {
+        "parquet_rows": 4,
+        "bigquery_rows": 4,
+        "bigquery_bytes": 936
+      }
+    },
+    "loader_summary": {
+      "run_id": "20261117T195222Z",
+      "contig": "chr22",
+      "region": null,
+      "sources": {
+        "1000G_30x_phased_panel": {
+          "source": "1000G_30x_phased_panel",
+          "path": "data/full/1kGP_high_coverage_Illumina.chr22.filtered.SNV_INDEL_SV_phased_panel.vcf.gz",
+          "sha256": "91aeaf0d1e805cf4223c5cbf12e22afc28db1709054c42bd668337219f8fddcc",
+          "records_read": 1066557,
+          "records_loaded": 1066555,
+          "records_quarantined": 2,
+          "quarantine_reasons": "{\"DUPLICATE_VARIANT\": 2}",
+          "genotype_rows": 207523893,
+          "missing_calls": 0,
+          "samples": 3202,
+          "region": null,
+          "seconds": 342.36,
+          "classes": {
+            "INDEL": 139365,
+            "SNV": 925730,
+            "SV": 1460
+          },
+          "ref_checks": {
+            "match": 1066555
+          }
+        },
+        "ClinVar": {
+          "source": "ClinVar",
+          "path": "data/full/clinvar.vcf.gz",
+          "sha256": "a0984d79c24a6735c6c709142e81672d41c673e3011cafb3ce16d8d5390d6d68",
+          "records_read": 100013,
+          "records_loaded": 99961,
+          "records_quarantined": 52,
+          "quarantine_reasons": "{\"ALT_MISSING\": 52}",
+          "genotype_rows": 0,
+          "missing_calls": 0,
+          "samples": 0,
+          "region": null,
+          "seconds": 3.32
+        },
+        "Ensembl_genes": {
+          "source": "Ensembl_genes",
+          "path": "data/full/Homo_sapiens.GRCh38.116.chromosome.22.gff3.gz",
+          "sha256": "5f7d3b2dc44a4fa77c0f395be359510a00490932fbcdda667f8da26a2d42a857",
+          "records_read": 1747,
+          "records_loaded": 1747,
+          "records_quarantined": 0,
+          "quarantine_reasons": "{}",
+          "genotype_rows": 0,
+          "missing_calls": 0,
+          "samples": 0,
+          "region": null,
+          "seconds": 0.27
+        },
+        "1000G_samples": {
+          "source": "1000G_samples",
+          "path": "data/full/20130606_g1k_3202_samples_ped_population.txt",
+          "sha256": "4e164b717433fc9bfc16e29b20e5b4659b4216185b3275322d421fe3d323c132",
+          "records_read": 3202,
+          "records_loaded": 3202,
+          "records_quarantined": 0,
+          "quarantine_reasons": "{}",
+          "genotype_rows": 0,
+          "missing_calls": 0,
+          "samples": 0,
+          "region": null,
+          "seconds": 0.04
+        }
+      }
+    }
+  }
+}
