@@ -1,0 +1,33 @@
+name: genome_vault
+version: "0.2.0"
+config-version: 2
+profile: genome_vault
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  contig: chr22
+  # HWE: chi-square (1 df) above this is p < 1e-6
+  hwe_p_threshold: 1.0e-6
+  max_alleles: 10000          # log-factorial table size; must cover 2 x the largest population
+  # gnomAD concordance: flag |AF difference| above this, where both sides
+  # have at least min_an alleles called
+  af_diff_threshold: 0.2
+  min_an: 400
+  # ClinVar: pathogenic calls at or above this frequency in any population
+  common_af: 0.01
+
+models:
+  genome_vault:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
+    analysis:
+      +materialized: table
+
+flags:
+  send_anonymous_usage_stats: false

@@ -126,3 +126,7 @@ $RECYCLE.BIN/
 data/full/
 data/work/
 data/sources/*.part
+warehouse/target/
+warehouse/logs/
+warehouse/dbt_packages/
+warehouse/.user.yml

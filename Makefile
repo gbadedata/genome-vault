@@ -4,7 +4,8 @@
 # Standard developer targets. Run `make help` to list them.
 
 .PHONY: help setup install lint lint-fix typecheck test test-unit test-integration \
-        clean tf-init tf-plan tf-apply tf-destroy tf-fmt bq-bootstrap
+        clean tf-init tf-plan tf-apply tf-destroy tf-fmt bq-bootstrap \
+        fetch load-slice warehouse-local slice
 
 # Default goal is help
 .DEFAULT_GOAL := help
@@ -24,10 +25,9 @@ help:  ## Show this help.
 # -----------------------------------------------------------------------------
 # Setup
 # -----------------------------------------------------------------------------
-setup: $(VENV)/bin/activate  ## Create venv and install all deps + pre-commit hooks.
+setup: $(VENV)/bin/activate  ## Create venv and install dev deps.
 	$(PIP) install --upgrade pip setuptools wheel
-	$(PIP) install -e ".[dev,api]"
-	$(VENV)/bin/pre-commit install
+	$(PIP) install -e ".[dev]"
 	@echo ""
 	@echo "Setup complete. Activate with: source .venv/bin/activate"
 
@@ -35,13 +35,13 @@ $(VENV)/bin/activate:
 	python3.12 -m venv $(VENV)
 
 install:  ## Reinstall the project in editable mode (run after adding new packages).
-	$(PIP) install -e ".[dev,api]"
+	$(PIP) install -e ".[dev]"
 
 # -----------------------------------------------------------------------------
 # Lint, format, typecheck
 # -----------------------------------------------------------------------------
 lint:  ## Run ruff in check mode.
-	$(VENV)/bin/ruff check src tests scripts
+	$(VENV)/bin/ruff check --select E,F,W,B,UP,I --ignore E501 src tests scripts
 
 lint-fix:  ## Run ruff in fix mode + format.
 	$(VENV)/bin/ruff check --fix src tests scripts
@@ -70,6 +70,33 @@ test-cov:  ## Run unit tests with coverage gate (used in CI).
 
 test-integration:  ## Run integration tests (requires GCP credentials).
 	$(VENV)/bin/pytest -m integration
+
+# -----------------------------------------------------------------------------
+# Data and warehouse
+# -----------------------------------------------------------------------------
+SLICE        := tests/fixtures/real
+PARQUET      := data/work/parquet
+DUCKDB       := data/work/genome_vault.duckdb
+
+fetch:  ## Download the real public sources (needs normal internet access).
+	$(PYTHON) scripts/fetch_sources.py
+
+load-slice:  ## Load the committed real slice (CYP2D6 region, 3,202 samples) into Parquet.
+	$(PYTHON) -m genome_vault.cli load \
+	  --kgp-vcf $(SLICE)/kgp_chr22_42050k_42250k.vcf.gz \
+	  --clinvar $(SLICE)/clinvar_22_42050k_42250k.vcf.gz \
+	  --genes $(SLICE)/ensembl_genes_22_42050k_42250k.gff3.gz \
+	  --samples $(SLICE)/20130606_g1k_3202_samples_ped_population.txt \
+	  --unrelated-panel $(SLICE)/integrated_call_samples_v3.20130502.ALL.panel \
+	  --reference $(SLICE)/grch38_chr22_42050k_42250k.fa \
+	  --out $(PARQUET)
+
+warehouse-local:  ## Build and test the dbt warehouse on DuckDB from the loaded Parquet.
+	cd warehouse && DBT_PROFILES_DIR=. GV_PARQUET=$(CURDIR)/$(PARQUET) GV_DUCKDB=$(CURDIR)/$(DUCKDB) \
+	  GV_GNOMAD_CSV=$(CURDIR)/$(SLICE)/gnomad_v3_chr22_42049000_42251000.csv \
+	  $(CURDIR)/$(VENV)/bin/dbt build --target local
+
+slice: load-slice warehouse-local  ## Load the real slice and build the warehouse end to end.
 
 # -----------------------------------------------------------------------------
 # Terraform

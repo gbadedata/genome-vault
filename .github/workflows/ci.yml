@@ -7,8 +7,13 @@ on:
 
 jobs:
   test:
-    name: Lint and test on the real slice
+    name: Lint, test and build the warehouse on the real slice
     runs-on: ubuntu-latest
+    env:
+      GV_PARQUET: ${{ github.workspace }}/data/work/parquet
+      GV_DUCKDB: ${{ github.workspace }}/data/work/genome_vault.duckdb
+      GV_GNOMAD_CSV: ${{ github.workspace }}/tests/fixtures/real/gnomad_v3_chr22_42049000_42251000.csv
+      DBT_PROFILES_DIR: ${{ github.workspace }}/warehouse
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,5 +24,21 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Lint
         run: ruff check --select E,F,W,B,UP,I --ignore E501 src scripts tests
-      - name: Test
+      - name: Unit tests (loader on the real slice)
         run: pytest -m unit
+      - name: Load the real slice
+        run: |
+          genome-vault load \
+            --kgp-vcf tests/fixtures/real/kgp_chr22_42050k_42250k.vcf.gz \
+            --clinvar tests/fixtures/real/clinvar_22_42050k_42250k.vcf.gz \
+            --genes tests/fixtures/real/ensembl_genes_22_42050k_42250k.gff3.gz \
+            --samples tests/fixtures/real/20130606_g1k_3202_samples_ped_population.txt \
+            --unrelated-panel tests/fixtures/real/integrated_call_samples_v3.20130502.ALL.panel \
+            --reference tests/fixtures/real/grch38_chr22_42050k_42250k.fa \
+            --out data/work/parquet
+      - name: Build and test the warehouse (dbt on DuckDB)
+        working-directory: warehouse
+        run: dbt build --target local
+      - name: Show the QC summary
+        working-directory: warehouse
+        run: dbt show --inline "select kind, check_name, passed, detail from {{ ref('qc_summary') }}" --limit 50
