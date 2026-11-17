@@ -18,7 +18,8 @@ START="${1:-42049000}"
 END="${2:-42251000}"
 MAX_GB="${MAX_GB:-5}"
 OUT="tests/fixtures/real/gnomad_v3_chr22_${START}_${END}.csv"
-PROJECT="${GCP_PROJECT_ID:-$(gcloud config get-value project 2>/dev/null)}"
+# Billed to this project: GV_PROJECT_ID if set, else genome-vault-202605.
+PROJECT="${GV_PROJECT_ID:-genome-vault-202605}"
 
 SQL="SELECT
   v.reference_name, v.start_position, v.end_position, v.reference_bases, ab.alt,

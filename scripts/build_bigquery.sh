@@ -11,14 +11,19 @@
 # =============================================================================
 set -euo pipefail
 
-PROJECT="${GCP_PROJECT_ID:-genome-vault-202605}"
+# GV_PROJECT_ID, not GCP_PROJECT_ID: other projects on the same machine set
+# that one, and it silently pointed these scripts at the wrong project.
+PROJECT="${GV_PROJECT_ID:-genome-vault-202605}"
 cd "$(dirname "$0")/.."
 ROOT="$(pwd)"
 
 command -v dbt >/dev/null || { echo "STOP: dbt not on PATH (pip install -e \".[cloud]\")" >&2; exit 1; }
-dbt --version 2>/dev/null | grep -q bigquery || { echo "STOP: dbt-bigquery missing (pip install -e \".[cloud]\")" >&2; exit 1; }
+python -c "import dbt.adapters.bigquery, google.cloud.bigquery" 2>/dev/null \
+  || { echo "STOP: dbt-bigquery is not installed in this Python (pip install -e \".[cloud]\")" >&2; exit 1; }
+[[ -f data/work/full/bq_load.json ]] || { echo "STOP: no data/work/full/bq_load.json: run bash scripts/load_bigquery.sh first" >&2; exit 1; }
+echo "== Project $PROJECT"
 
-export GCP_PROJECT_ID="$PROJECT"
+export GV_PROJECT_ID="$PROJECT"
 export DBT_PROFILES_DIR="$ROOT/warehouse"
 started="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 

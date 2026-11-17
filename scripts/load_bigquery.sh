@@ -18,7 +18,9 @@
 # =============================================================================
 set -euo pipefail
 
-PROJECT="${GCP_PROJECT_ID:-genome-vault-202605}"
+# GV_PROJECT_ID, not GCP_PROJECT_ID: other projects on the same machine set
+# that one, and it silently pointed these scripts at the wrong project.
+PROJECT="${GV_PROJECT_ID:-genome-vault-202605}"
 LOCATION="US"
 BUCKET="${GV_BUCKET:-${PROJECT}-gv-data}"
 RAW_DATASET="${GV_RAW_DATASET:-gv_raw}"
@@ -45,9 +47,9 @@ gcloud auth print-access-token >/dev/null 2>&1 || fail "gcloud is not signed in:
 gcloud auth application-default print-access-token >/dev/null 2>&1 \
   || fail "no application-default credentials: gcloud auth application-default login"
 
-ds_location=$(bq --project_id="$PROJECT" show --format=json "$PROJECT:$RAW_DATASET" 2>/dev/null \
-  | python -c 'import json,sys; print(json.load(sys.stdin)["location"])') \
-  || fail "dataset $PROJECT:$RAW_DATASET not found: run terraform apply first"
+ds_json=$(bq --project_id="$PROJECT" show --format=json "$PROJECT:$RAW_DATASET" 2>/dev/null) \
+  || fail "dataset $PROJECT:$RAW_DATASET not found (is $PROJECT the right project? run terraform apply first)"
+ds_location=$(python -c 'import json,sys; print(json.loads(sys.argv[1])["location"])' "$ds_json")
 [[ "$ds_location" == "$LOCATION" ]] || fail "$RAW_DATASET is in $ds_location, expected $LOCATION"
 bucket_location=$(gcloud storage buckets describe "gs://$BUCKET" --project="$PROJECT" --format='value(location)' 2>/dev/null) \
   || fail "bucket gs://$BUCKET not found: run terraform apply first"
