@@ -98,7 +98,7 @@ load-slice:  ## Load the committed real slice (CYP2D6 region, 3,202 samples) int
 	  --out $(PARQUET)
 
 warehouse-local:  ## Build and test the dbt warehouse on DuckDB from the loaded Parquet.
-	cd warehouse && DBT_PROFILES_DIR=. GV_PARQUET=$(CURDIR)/$(PARQUET) GV_DUCKDB=$(CURDIR)/$(DUCKDB) \
+	cd warehouse && DBT_PROFILES_DIR=. DBT_ENGINE_MANAGE_STATE=false GV_PARQUET=$(CURDIR)/$(PARQUET) GV_DUCKDB=$(CURDIR)/$(DUCKDB) \
 	  GV_GNOMAD_CSV=$(CURDIR)/$(SLICE)/gnomad_v3_chr22_42049000_42251000.csv \
 	  $(CURDIR)/$(VENV)/bin/dbt build --target local
 
