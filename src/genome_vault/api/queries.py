@@ -1,6 +1,7 @@
 """The API's SQL. {t} is the table prefix and @name a bound parameter; values
-never reach the SQL text. Every variant query filters on chrom and pos so
-BigQuery can prune the clustered api_variant table."""
+never reach the SQL text. Every api_variant query filters on pos directly (no
+function around it), so BigQuery prunes the table's integer-range partitions
+and its pre-run estimate stays under the per-query byte cap."""
 
 VARIANT_BY_ID = """
 select * from {t}api_variant
@@ -15,11 +16,17 @@ order by pos, variant_id
 limit @limit
 """
 
-VARIANTS_BY_RSID = """
-select * from {t}api_variant
+RSID_POSITIONS = """
+select chrom, pos, variant_id from {t}api_rsid
 where rsid = @rsid
 order by pos
 limit 20
+"""
+
+VARIANTS_AT_POSITIONS = """
+select * from {t}api_variant
+where chrom = @chrom and pos between @first_pos and @last_pos and rsid = @rsid
+order by pos
 """
 
 GENE_BY_SYMBOL = """

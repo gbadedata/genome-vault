@@ -46,6 +46,9 @@ export DBT_PROFILES_DIR="$ROOT/warehouse"
 # needs an account and sends run metadata off the machine). It is opt-in, but
 # a user_settings.yml left by another dbt version can switch it on, and then
 # the build stops to ask for a browser login. This project never uses it.
+# dbt_state/__init__.py (2.64.4) reads this variable before loading and, when
+# it is false, registers no plugin. dbt-core itself does not know the name and
+# prints an EnvironmentVariableNamespaceDeprecation warning: harmless.
 export DBT_ENGINE_MANAGE_STATE=false
 started="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
