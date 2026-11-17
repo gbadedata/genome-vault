@@ -1,25 +1,19 @@
 {
-  "generated_at": "2026-11-17T21:49:58+00:00",
+  "generated_at": "2026-11-17T23:01:08+00:00",
   "project": "genome-vault-202605",
   "dataset": "gv",
-  "code_version": "c5e9666",
+  "code_version": "8112da8",
   "dbt": {
-    "invocation_id": "cb74538b-a40d-4988-b3fa-1246a4c046d2",
-    "dbt_version": "1.13.0b1",
-    "elapsed_seconds": 74.6,
+    "invocation_id": "a79dcb50-7c8f-4f66-998c-afe787becbdf",
+    "dbt_version": "1.12.7",
+    "elapsed_seconds": 87.3,
     "statuses": {
-      "success": 26,
-      "pass": 30
+      "success": 30,
+      "pass": 39
     },
     "not_passing": []
   },
   "qc_summary": [
-    {
-      "kind": "finding",
-      "check_name": "frequency differences flagged against gnomAD (variant-population pairs)",
-      "passed": null,
-      "detail": "1718"
-    },
     {
       "kind": "finding",
       "check_name": "ClinVar pathogenic calls common in a population",
@@ -28,9 +22,27 @@
     },
     {
       "kind": "finding",
+      "check_name": "share in GIAB difficult regions: gnomad_af_discordant",
+      "passed": null,
+      "detail": "94.9% of variants with the finding vs 41.7% of variants tested"
+    },
+    {
+      "kind": "finding",
+      "check_name": "HWE departures, exact p < threshold, unrelated (variant-population pairs)",
+      "passed": null,
+      "detail": "11345"
+    },
+    {
+      "kind": "finding",
       "check_name": "share in GIAB difficult regions: common_but_absent_from_gnomad",
       "passed": null,
       "detail": "99.7% of variants with the finding vs 45% of variants tested"
+    },
+    {
+      "kind": "finding",
+      "check_name": "frequency differences flagged against gnomAD (variant-population pairs)",
+      "passed": null,
+      "detail": "1718"
     },
     {
       "kind": "finding",
@@ -46,27 +58,15 @@
     },
     {
       "kind": "finding",
-      "check_name": "share in GIAB difficult regions: gnomad_af_discordant",
-      "passed": null,
-      "detail": "94.9% of variants with the finding vs 41.7% of variants tested"
-    },
-    {
-      "kind": "finding",
       "check_name": "share in GIAB difficult regions: hwe_departure",
       "passed": null,
       "detail": "93.6% of variants with the finding vs 40.9% of variants tested"
     },
     {
-      "kind": "finding",
-      "check_name": "HWE departures, exact p < threshold, unrelated (variant-population pairs)",
-      "passed": null,
-      "detail": "11345"
-    },
-    {
       "kind": "invariant",
-      "check_name": "genotype rows equal loader count",
+      "check_name": "gnomAD positions are 0-based (+1 matches best)",
       "passed": true,
-      "detail": "207523964"
+      "detail": "190739 vs 7609"
     },
     {
       "kind": "invariant",
@@ -76,27 +76,9 @@
     },
     {
       "kind": "invariant",
-      "check_name": "allele counts reproduce source (unrelated)",
-      "passed": true,
-      "detail": "5332785"
-    },
-    {
-      "kind": "invariant",
       "check_name": "allele counts reproduce source (all samples)",
       "passed": true,
       "detail": "6399342"
-    },
-    {
-      "kind": "invariant",
-      "check_name": "exact HWE test reproduces source HWE p-values",
-      "passed": true,
-      "detail": "5325475"
-    },
-    {
-      "kind": "invariant",
-      "check_name": "REF alleles match GRCh38",
-      "passed": true,
-      "detail": "1066557"
     },
     {
       "kind": "invariant",
@@ -106,9 +88,27 @@
     },
     {
       "kind": "invariant",
-      "check_name": "gnomAD positions are 0-based (+1 matches best)",
+      "check_name": "genotype rows equal loader count",
       "passed": true,
-      "detail": "190739 vs 7609"
+      "detail": "207523964"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "allele counts reproduce source (unrelated)",
+      "passed": true,
+      "detail": "5332785"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "REF alleles match GRCh38",
+      "passed": true,
+      "detail": "1066557"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "exact HWE test reproduces source HWE p-values",
+      "passed": true,
+      "detail": "5325475"
     }
   ],
   "findings": {
@@ -358,26 +358,6 @@
         "outside_unrelated_set": 1
       },
       {
-        "superpopulation": "AFR",
-        "population": "GWD",
-        "samples": 2,
-        "on_ti_tv": 0,
-        "on_het_hom": 1,
-        "on_non_ref_sites": 1,
-        "mean_het_hom_z": -4.7,
-        "outside_unrelated_set": 1
-      },
-      {
-        "superpopulation": "SAS",
-        "population": "BEB",
-        "samples": 2,
-        "on_ti_tv": 0,
-        "on_het_hom": 2,
-        "on_non_ref_sites": 1,
-        "mean_het_hom_z": -5.2,
-        "outside_unrelated_set": 0
-      },
-      {
         "superpopulation": "AMR",
         "population": "PUR",
         "samples": 2,
@@ -398,24 +378,24 @@
         "outside_unrelated_set": 0
       },
       {
-        "superpopulation": "EAS",
-        "population": "CHS",
-        "samples": 1,
+        "superpopulation": "SAS",
+        "population": "BEB",
+        "samples": 2,
         "on_ti_tv": 0,
-        "on_het_hom": 1,
+        "on_het_hom": 2,
         "on_non_ref_sites": 1,
-        "mean_het_hom_z": -4.7,
+        "mean_het_hom_z": -5.2,
         "outside_unrelated_set": 0
       },
       {
         "superpopulation": "AFR",
-        "population": "ESN",
-        "samples": 1,
+        "population": "GWD",
+        "samples": 2,
         "on_ti_tv": 0,
         "on_het_hom": 1,
         "on_non_ref_sites": 1,
-        "mean_het_hom_z": -6.9,
-        "outside_unrelated_set": 0
+        "mean_het_hom_z": -4.7,
+        "outside_unrelated_set": 1
       },
       {
         "superpopulation": "EAS",
@@ -435,6 +415,26 @@
         "on_het_hom": 0,
         "on_non_ref_sites": 1,
         "mean_het_hom_z": -4.0,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "AFR",
+        "population": "ESN",
+        "samples": 1,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": -6.9,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "EAS",
+        "population": "CHS",
+        "samples": 1,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": -4.7,
         "outside_unrelated_set": 0
       }
     ],
@@ -542,51 +542,51 @@
     }
   },
   "bigquery_jobs": {
-    "count": 56,
-    "gb_processed": 26.373,
-    "gb_billed": 26.539,
+    "count": 69,
+    "gb_processed": 27.086,
+    "gb_billed": 27.298,
     "largest_single_query_gb_billed": 5.188,
     "errors": [],
     "top_by_bytes_billed": [
       {
         "node_id": "model_genome_vault_fct_genotype",
         "gb_billed": 5.188,
-        "seconds": 4.011
+        "seconds": 4.45
       },
       {
         "node_id": "model_genome_vault_qc_sample",
         "gb_billed": 4.996,
-        "seconds": 2.487
+        "seconds": 2.331
       },
       {
         "node_id": "model_genome_vault_variant_population_freq",
         "gb_billed": 4.602,
-        "seconds": 2.743
+        "seconds": 3.35
       },
       {
         "node_id": "model_genome_vault_stg_gnomad",
         "gb_billed": 1.892,
-        "seconds": 2.647
+        "seconds": 2.667
       },
       {
         "node_id": "test_genome_vault_relationships_fct_genotype_variant_key__varia",
         "gb_billed": 1.669,
-        "seconds": 0.516
-      },
-      {
-        "node_id": "test_genome_vault_relationships_fct_genotype_sample_index__samp",
-        "gb_billed": 1.661,
-        "seconds": 0.457
+        "seconds": 0.463
       },
       {
         "node_id": "test_genome_vault_accepted_values_fct_genotype_gt__false__1__2_",
         "gb_billed": 1.661,
-        "seconds": 0.293
+        "seconds": 0.281
+      },
+      {
+        "node_id": "test_genome_vault_relationships_fct_genotype_sample_index__samp",
+        "gb_billed": 1.661,
+        "seconds": 0.382
       },
       {
         "node_id": "model_genome_vault_gnomad_concordance",
         "gb_billed": 1.653,
-        "seconds": 3.74
+        "seconds": 5.331
       }
     ]
   },

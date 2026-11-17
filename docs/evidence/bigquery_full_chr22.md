@@ -1,6 +1,6 @@
-# BigQuery build on full chromosome 22 (2026-11-17T21:49:58+00:00)
+# BigQuery build on full chromosome 22 (2026-11-17T23:01:08+00:00)
 
-Project `genome-vault-202605`, dataset `gv`, location US, code version `c5e9666`.
+Project `genome-vault-202605`, dataset `gv`, location US, code version `8112da8`.
 
 ## Load
 
@@ -22,33 +22,33 @@ Run `20261117T212537Z` from `gs://genome-vault-202605-gv-data/runs/20261117T2125
 
 ## dbt build
 
-Statuses: {'success': 26, 'pass': 30}, 74.6 s, dbt 1.13.0b1.
+Statuses: {'success': 30, 'pass': 39}, 87.3 s, dbt 1.12.7.
 
 
 ## QC summary
 
 | Kind | Check | Passed | Detail |
 |---|---|---|---|
-| finding | frequency differences flagged against gnomAD (variant-population pairs) | None | 1718 |
 | finding | ClinVar pathogenic calls common in a population | None | 2 |
+| finding | share in GIAB difficult regions: gnomad_af_discordant | None | 94.9% of variants with the finding vs 41.7% of variants tested |
+| finding | HWE departures, exact p < threshold, unrelated (variant-population pairs) | None | 11345 |
 | finding | share in GIAB difficult regions: common_but_absent_from_gnomad | None | 99.7% of variants with the finding vs 45% of variants tested |
+| finding | frequency differences flagged against gnomAD (variant-population pairs) | None | 1718 |
 | finding | variant-population pairs found in gnomAD | None | 4892150 of 5325475 |
 | finding | samples flagged by QC z-scores (within population; within superpopulation) | None | 15; 27 |
-| finding | share in GIAB difficult regions: gnomad_af_discordant | None | 94.9% of variants with the finding vs 41.7% of variants tested |
 | finding | share in GIAB difficult regions: hwe_departure | None | 93.6% of variants with the finding vs 40.9% of variants tested |
-| finding | HWE departures, exact p < threshold, unrelated (variant-population pairs) | None | 11345 |
-| invariant | genotype rows equal loader count | True | 207523964 |
-| invariant | every 1000G record loaded or quarantined | True | 1066557 |
-| invariant | allele counts reproduce source (unrelated) | True | 5332785 |
-| invariant | allele counts reproduce source (all samples) | True | 6399342 |
-| invariant | exact HWE test reproduces source HWE p-values | True | 5325475 |
-| invariant | REF alleles match GRCh38 | True | 1066557 |
-| invariant | variant rows equal records loaded | True | 1066557 |
 | invariant | gnomAD positions are 0-based (+1 matches best) | True | 190739 vs 7609 |
+| invariant | every 1000G record loaded or quarantined | True | 1066557 |
+| invariant | allele counts reproduce source (all samples) | True | 6399342 |
+| invariant | variant rows equal records loaded | True | 1066557 |
+| invariant | genotype rows equal loader count | True | 207523964 |
+| invariant | allele counts reproduce source (unrelated) | True | 5332785 |
+| invariant | REF alleles match GRCh38 | True | 1066557 |
+| invariant | exact HWE test reproduces source HWE p-values | True | 5325475 |
 
 ## Cost
 
-56 queries; 26.373 GB processed, 26.539 GB billed; largest single query 5.188 GB (cap 20 GB).
+69 queries; 27.086 GB processed, 27.298 GB billed; largest single query 5.188 GB (cap 20 GB).
 
 ## Findings by GIAB region class
 
@@ -104,14 +104,14 @@ Flagged within population, by population:
 | Superpop. | Population | Samples | Ti/Tv | Het/hom | Non-ref sites | Mean het/hom z | Not in unrelated set |
 |---|---|---|---|---|---|---|---|
 | SAS | PJL | 3 | 0 | 3 | 2 | -4.7 | 1 |
-| AFR | GWD | 2 | 0 | 1 | 1 | -4.7 | 1 |
-| SAS | BEB | 2 | 0 | 2 | 1 | -5.2 | 0 |
 | AMR | PUR | 2 | 0 | 1 | 1 | -1.4 | 0 |
 | SAS | STU | 2 | 0 | 2 | 1 | -4.6 | 0 |
-| EAS | CHS | 1 | 0 | 1 | 1 | -4.7 | 0 |
-| AFR | ESN | 1 | 0 | 1 | 1 | -6.9 | 0 |
+| SAS | BEB | 2 | 0 | 2 | 1 | -5.2 | 0 |
+| AFR | GWD | 2 | 0 | 1 | 1 | -4.7 | 1 |
 | EAS | KHV | 1 | 0 | 1 | 1 | -6.9 | 1 |
 | EAS | CDX | 1 | 0 | 0 | 1 | -4 | 0 |
+| AFR | ESN | 1 | 0 | 1 | 1 | -6.9 | 0 |
+| EAS | CHS | 1 | 0 | 1 | 1 | -4.7 | 0 |
 
 ## ClinVar pathogenic calls common in a population
 

@@ -1,0 +1,130 @@
+{
+  "url": "https://genome-vault-api-guovahumxq-nw.a.run.app",
+  "bigquery_bytes_billed_today": 146800640,
+  "checked_at": "2026-11-17T23:07:04+00:00",
+  "passed": 15,
+  "failed": 0,
+  "gene_naga_variants": 930,
+  "calls": [
+    {
+      "path": "/health",
+      "status": 200,
+      "expected": 200,
+      "ms": 144,
+      "ok": true,
+      "check": "status, backend, version"
+    },
+    {
+      "path": "/variants/chr22:42058350:G:A",
+      "status": 200,
+      "expected": 200,
+      "ms": 2830,
+      "ok": true,
+      "check": "variant detail"
+    },
+    {
+      "path": "/variants/chr22:42058350:G:A",
+      "status": 200,
+      "expected": 200,
+      "ms": 139,
+      "ok": true,
+      "check": "same answer again (served from cache)"
+    },
+    {
+      "path": "/variants?rsid=rs5758566",
+      "status": 200,
+      "expected": 200,
+      "ms": 2190,
+      "ok": true,
+      "check": "rsID lookup"
+    },
+    {
+      "path": "/variants?chrom=chr22&start=42126000&end=42131000&limit=500",
+      "status": 200,
+      "expected": 200,
+      "ms": 1309,
+      "ok": true,
+      "check": "region query"
+    },
+    {
+      "path": "/variants?chrom=chr22&start=16000000&end=16999999&flagged_only=true&limit=50",
+      "status": 200,
+      "expected": 200,
+      "ms": 1177,
+      "ok": true,
+      "check": "flagged variants only"
+    },
+    {
+      "path": "/genes/NAGA?limit=500",
+      "status": 200,
+      "expected": 200,
+      "ms": 2392,
+      "ok": true,
+      "check": "gene and its variants"
+    },
+    {
+      "path": "/samples/HG00096",
+      "status": 200,
+      "expected": 200,
+      "ms": 1441,
+      "ok": true,
+      "check": "sample QC"
+    },
+    {
+      "path": "/qc/summary",
+      "status": 200,
+      "expected": 200,
+      "ms": 1122,
+      "ok": true,
+      "check": "every invariant passes"
+    },
+    {
+      "path": "/qc/findings-by-region",
+      "status": 200,
+      "expected": 200,
+      "ms": 1234,
+      "ok": true,
+      "check": "findings by region class"
+    },
+    {
+      "path": "/variants?chrom=chr22&start=22857000&end=22857100",
+      "status": 200,
+      "expected": 200,
+      "ms": 1328,
+      "ok": true,
+      "check": "structural variants at 22,857,056"
+    },
+    {
+      "path": "/variants/chr22:22857056:T:%3CDEL%3E:22893780:-36724",
+      "status": 200,
+      "expected": 200,
+      "ms": 1045,
+      "ok": true,
+      "check": "structural variant by its END/SVLEN key"
+    },
+    {
+      "path": "/variants/chr22:22857056:T:%3CDEL%3E:22904991:-47935",
+      "status": 200,
+      "expected": 200,
+      "ms": 1498,
+      "ok": true,
+      "check": "structural variant by its END/SVLEN key"
+    },
+    {
+      "path": "/variants/chr22:1:A:G",
+      "status": 404,
+      "expected": 404,
+      "ms": 1144,
+      "ok": true,
+      "check": "unknown variant"
+    },
+    {
+      "path": "/variants?chrom=chr22&start=1&end=5000000",
+      "status": 400,
+      "expected": 400,
+      "ms": 267,
+      "ok": true,
+      "check": "region too large"
+    }
+  ]
+}
