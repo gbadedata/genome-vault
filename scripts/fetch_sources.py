@@ -9,6 +9,8 @@ UCSC):
     python scripts/fetch_sources.py                 # download + dev slice
     python scripts/fetch_sources.py --gnomad-schema # also save the gnomAD
                                                     # BigQuery schema (needs bq)
+    python scripts/fetch_sources.py --only giab     # just the GIAB stratifications,
+                                                    # merged into the existing manifest
 
 Sources (all open data, no access restrictions):
 
@@ -18,6 +20,10 @@ Sources (all open data, no access restrictions):
 * ClinVar GRCh38 VCF (NCBI), sliced to chromosome 22.
 * Ensembl GRCh38 gene annotation (GFF3) for chromosome 22.
 * UCSC hg38 chr22 reference sequence, for checking REF alleles.
+* Genome in a Bottle (NIST) GRCh38 genome stratifications, newest v3.x
+  release: segmental duplications, low mappability, tandem repeats and
+  homopolymers, and the union of all difficult regions. These are the BED
+  files used to benchmark variant callers by genomic context.
 
 Large files are downloaded once, resumed if interrupted, and checked against
 the server's Content-Length. Every file gets a SHA-256 in
@@ -40,7 +46,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import quote, unquote, urljoin
 
 import requests
 
@@ -54,6 +60,15 @@ ENSEMBL_GFF3_DIR = "https://ftp.ensembl.org/pub/current_gff3/homo_sapiens/"
 UCSC_CHR22 = "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz"
 
 GNOMAD_TABLE = "bigquery-public-data:gnomAD.v3_genomes__chr22"
+
+GIAB_STRATIFICATIONS = "https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/genome-stratifications/"
+# name -> (category directory in the release, file name pattern)
+GIAB_BEDS = {
+    "segdup": ("SegmentalDuplications", r"^GRCh38_segdups\.bed\.gz$"),
+    "low_mappability": ("Mappability", r"^GRCh38_lowmappabilityall\.bed\.gz$"),
+    "tandem_repeat_homopolymer": ("LowComplexity", r"^GRCh38_AllTandemRepeatsandHomopolymers_slop5\.bed\.gz$"),
+    "all_difficult": ("Union", r"^GRCh38_alldifficultregions\.bed\.gz$"),
+}
 
 ROOT = Path(__file__).resolve().parents[1]
 FULL = ROOT / "data" / "full"
@@ -148,6 +163,63 @@ def download(url: str, dest: Path, retries: int = 5) -> dict:
         "sha256": sha256(dest),
         "retrieved_at": retrieved,
     }
+
+
+def giab_grch38_dir() -> tuple[str, str]:
+    """(version, URL) of the GRCh38 directory in the newest v3.x GIAB
+    stratification release, found from the directory listings."""
+    entries = [unquote(n) for n in list_dir(GIAB_STRATIFICATIONS)]
+    versions = [n.rstrip("/") for n in entries if re.fullmatch(r"v3\.\d+/?", n)]
+    if not versions:
+        raise SystemExit(f"No v3.x releases listed at {GIAB_STRATIFICATIONS}: found {entries}")
+    latest = max(versions, key=lambda v: int(v.split(".")[1]))
+    base = f"{GIAB_STRATIFICATIONS}{latest}/"
+    names = [unquote(n) for n in list_dir(base)]
+    grch38 = [n for n in names if re.fullmatch(r"GRCh38(@all)?/", n)]
+    if len(grch38) != 1:
+        raise SystemExit(f"Expected one GRCh38 directory in {base}, found {names}")
+    return latest, base + quote(grch38[0])
+
+
+def slice_bed(src: Path, dest: Path, contig: str, start: int | None = None, end: int | None = None) -> int:
+    """Copy BED intervals on contig (optionally only those overlapping the
+    1-based region start-end) to a gzipped BED. Returns intervals written."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    n = 0
+    with gzip.open(src, "rt") as fin, gzip.open(dest, "wt") as fout:
+        for line in fin:
+            if line.startswith(("#", "track", "browser")) or not line.strip():
+                continue
+            cols = line.split("\t")
+            if cols[0] != contig:
+                continue
+            s, e = int(cols[1]), int(cols[2])  # 0-based, half-open
+            if start is not None and (e < start or s >= end):
+                continue
+            fout.write("\t".join(cols[:3]).rstrip("\n") + "\n")
+            n += 1
+    return n
+
+
+def fetch_giab(manifest: dict, start: int, end: int) -> None:
+    log("== GIAB GRCh38 stratifications (NIST)")
+    version, grch38 = giab_grch38_dir()
+    log(f"  release {version}: {grch38}")
+    tag = f"{start // 1000}k_{end // 1000}k"
+    for name, (category, pattern) in GIAB_BEDS.items():
+        folder = f"{grch38}{category}/"
+        fname = pick([unquote(n) for n in list_dir(folder)], pattern, f"GIAB {name} BED")
+        dest = FULL / "giab" / f"{version}_{fname}"
+        info = download(folder + quote(fname), dest)
+        info["giab_version"] = version
+        chr22 = FULL / "giab" / f"{version}_{name}_chr22.bed.gz"
+        info["chr22_path"] = str(chr22.relative_to(ROOT))
+        info["chr22_intervals"] = slice_bed(dest, chr22, "chr22")
+        manifest["sources"][f"giab_{name}"] = info
+        fx = FIXTURES / f"giab_{name}_22_{tag}.bed.gz"
+        n = slice_bed(dest, fx, "chr22", start, end)
+        manifest["fixtures"][f"giab_{name}"] = {"path": str(fx.relative_to(ROOT)), "count": n, "sha256": sha256(fx)}
+        log(f"  {name}: {fname}, {info['chr22_intervals']:,} intervals on chr22, {n:,} in the slice")
 
 
 def vcf_header_value(path: Path, key: str) -> str | None:
@@ -250,10 +322,22 @@ def main() -> None:
     ap.add_argument("--region-start", type=int, default=42_050_000)
     ap.add_argument("--region-end", type=int, default=42_250_000)
     ap.add_argument("--gnomad-schema", action="store_true", help="also save the gnomAD v3 BigQuery schema (needs bq)")
+    ap.add_argument("--only", choices=["giab"], help="fetch only this group and merge it into the existing manifest")
     args = ap.parse_args()
     start, end = args.region_start, args.region_end
     if not 1 <= start < end:
         raise SystemExit("region start must be >= 1 and below region end")
+
+    if args.only == "giab":
+        path = SOURCES / "manifest.json"
+        if not path.exists():
+            raise SystemExit(f"{path} not found: run without --only first")
+        manifest = json.loads(path.read_text())
+        fetch_giab(manifest, start, end)
+        manifest["updated_at"] = now()
+        path.write_text(json.dumps(manifest, indent=2))
+        log(f"\nDone. Manifest: {path.relative_to(ROOT)}")
+        return
 
     manifest: dict = {"created_at": now(), "dev_region": f"chr22:{start}-{end}", "sources": {}, "fixtures": {}}
 
@@ -306,6 +390,8 @@ def main() -> None:
     fx["kgp_phase3_panel"] = {"path": str(panel_dest.relative_to(ROOT)), "sha256": sha256(panel_dest)}
     genes_all = FULL / "ensembl_genes_22.gff3.gz"
     fx["ensembl_genes_chr22_all"] = {"path": str(genes_all.relative_to(ROOT)), "count": slice_gff3(FULL / gff, genes_all, "22")}
+
+    fetch_giab(manifest, start, end)
 
     if args.gnomad_schema:
         log("== gnomAD v3 BigQuery schema (metadata only, no query cost)")
