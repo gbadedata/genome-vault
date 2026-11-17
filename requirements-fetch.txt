@@ -1,0 +1,3 @@
+# Only what scripts/fetch_sources.py needs
+pysam>=0.22,<1.0
+requests>=2.31,<3.0

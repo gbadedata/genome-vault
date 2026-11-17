@@ -117,3 +117,12 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
+
+# -----------------------------------------------------------------------------
+# genome-vault data
+# -----------------------------------------------------------------------------
+# Full public downloads stay local; the small real slices in tests/fixtures/real
+# are committed.
+data/full/
+data/work/
+data/sources/*.part
