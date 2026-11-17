@@ -27,6 +27,7 @@ from genome_vault.ingestion.annotations import load_genes, load_samples
 from genome_vault.ingestion.clinvar import load_clinvar
 from genome_vault.ingestion.kgp import load_kgp
 from genome_vault.ingestion.reference import Reference
+from genome_vault.ingestion.regions import REGION_SOURCE_SCHEMA, STRATIFICATIONS, load_regions
 from genome_vault.ingestion.writer import TableWriter
 
 RUN_SCHEMA = pa.schema(
@@ -117,6 +118,39 @@ def load(kgp_vcf: str, clinvar_vcf: str, genes: str, samples: str, unrelated_pan
     runs.close()
     (out / "load_summary.json").write_text(json.dumps(report, indent=2, default=str))
     click.echo(f"wrote {out}")
+
+
+@main.command()
+@click.option("--bed", "beds", multiple=True, required=True,
+              help=f"NAME=PATH, once per stratification; NAME is one of {', '.join(STRATIFICATIONS)}")
+@click.option("--out", required=True, type=click.Path(file_okay=False, path_type=Path))
+@click.option("--contig", default="chr22", show_default=True)
+def regions(beds: tuple[str, ...], out: Path, contig: str) -> None:
+    """Load genomic-context regions (GIAB stratification BEDs) into Parquet."""
+    parsed: dict[str, str] = {}
+    for item in beds:
+        name, sep, path = item.partition("=")
+        if not sep or name not in STRATIFICATIONS:
+            raise click.BadParameter(f"{item!r}: expected NAME=PATH with NAME in {STRATIFICATIONS}", param_hint="--bed")
+        if not Path(path).is_file():
+            raise click.BadParameter(f"{path} does not exist", param_hint="--bed")
+        parsed[name] = path
+    missing = set(STRATIFICATIONS) - set(parsed)
+    if missing:
+        raise click.BadParameter(f"missing stratifications: {sorted(missing)}", param_hint="--bed")
+
+    out.mkdir(parents=True, exist_ok=True)
+    sources = TableWriter(out, "genome_region_sources", REGION_SOURCE_SCHEMA)
+    for s in load_regions(parsed, out, contig=contig):
+        sources.append({
+            "stratification": s.stratification, "path": parsed[s.stratification],
+            "sha256": sha256(parsed[s.stratification]), "intervals_read": s.intervals_read,
+            "intervals_merged": s.intervals_merged, "bases": s.bases, "loaded_at": dt.datetime.now(dt.UTC),
+        })
+        click.echo(f"  {s.stratification}: {s.intervals_read:,} intervals, {s.intervals_merged:,} after merging, "
+                   f"{s.bases:,} bp on {contig}")
+    sources.close()
+    click.echo(f"wrote {out}/genome_regions and {out}/genome_region_sources")
 
 
 if __name__ == "__main__":

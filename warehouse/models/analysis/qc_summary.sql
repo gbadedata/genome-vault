@@ -13,6 +13,16 @@ recon as (
     from {{ ref('qc_allele_count_reconciliation') }}
 ),
 offset_check as (select * from {{ ref('qc_gnomad_offset') }}),
+difficult as (
+    select
+        finding,
+        sum(case when region_class <> 'not_difficult' then with_finding else 0 end) as findings_in_difficult,
+        sum(with_finding) as findings,
+        sum(case when region_class <> 'not_difficult' then variants else 0 end) as variants_in_difficult,
+        sum(variants) as variants
+    from {{ ref('findings_by_region_class') }}
+    group by finding
+),
 conc as (
     select
         sum(case when in_gnomad then 1 else 0 end) as in_gnomad,
@@ -58,10 +68,10 @@ union all
 select 'finding', 'variant-population pairs found in gnomAD', null,
        concat(cast((select in_gnomad from conc) as {{ dbt.type_string() }}), ' of ', cast((select compared from conc) as {{ dbt.type_string() }}))
 union all
-select 'finding', 'frequency differences flagged against gnomAD', null,
+select 'finding', 'frequency differences flagged against gnomAD (variant-population pairs)', null,
        cast((select flagged from conc) as {{ dbt.type_string() }})
 union all
-select 'finding', 'HWE departures (exact p < threshold, unrelated)', null,
+select 'finding', 'HWE departures, exact p < threshold, unrelated (variant-population pairs)', null,
        cast((select count(*) from {{ ref('qc_hardy_weinberg') }} where hwe_departure) as {{ dbt.type_string() }})
 union all
 select 'finding', 'samples flagged by QC z-scores', null,
@@ -69,3 +79,10 @@ select 'finding', 'samples flagged by QC z-scores', null,
 union all
 select 'finding', 'ClinVar pathogenic calls common in a population', null,
        cast((select count(*) from {{ ref('clinvar_in_cohort') }} where common_but_pathogenic) as {{ dbt.type_string() }})
+union all
+select 'finding', concat('share in GIAB difficult regions: ', finding), null,
+       concat(cast(round(100.0 * findings_in_difficult / nullif(findings, 0), 1) as {{ dbt.type_string() }}),
+              '% of variants with the finding vs ',
+              cast(round(100.0 * variants_in_difficult / nullif(variants, 0), 1) as {{ dbt.type_string() }}),
+              '% of variants tested')
+from difficult

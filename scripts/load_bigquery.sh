@@ -11,8 +11,12 @@
 # Every gcloud and bq call names the project, so nothing is billed to whatever
 # project gcloud happens to default to.
 #
-# Usage:  bash scripts/load_bigquery.sh               # load, upload, check
-#         bash scripts/load_bigquery.sh --skip-loader # reuse existing Parquet
+# Usage:  bash scripts/load_bigquery.sh                # everything
+#         bash scripts/load_bigquery.sh --skip-loader  # reuse the 1000 Genomes,
+#                                                      # ClinVar and gene Parquet
+#         bash scripts/load_bigquery.sh --skip-loader --tables genome_regions,genome_region_sources
+#                                                      # upload and load only these
+# The GIAB region tables are rebuilt on every run (a few seconds).
 # Needs:  terraform apply done (bucket and datasets), gcloud auth login,
 #         gcloud auth application-default login, pip install -e ".[cloud]".
 # =============================================================================
@@ -29,7 +33,14 @@ PARQUET="$WORK/parquet"
 MANIFEST="data/sources/manifest.json"
 RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)"
 SKIP_LOADER=0
-[[ "${1:-}" == "--skip-loader" ]] && SKIP_LOADER=1
+TABLES=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --skip-loader) SKIP_LOADER=1; shift ;;
+    --tables) TABLES="${2:?--tables needs a comma-separated list}"; shift 2 ;;
+    *) echo "unknown option: $1" >&2; exit 2 ;;
+  esac
+done
 
 step() { printf '\n== %s\n' "$1"; }
 fail() { printf '\nSTOP: %s\n' "$1" >&2; exit 1; }
@@ -71,6 +82,19 @@ REFERENCE=$(source_path ucsc_chr22_fasta)
 for f in "$KGP_VCF" "$CLINVAR" "$GENES" "$SAMPLES" "$PANEL" "$REFERENCE"; do
   [[ -f "$f" ]] || fail "$f is missing: rerun python scripts/fetch_sources.py"
 done
+giab_path() {
+  python - "$MANIFEST" "$1" <<'PY'
+import json, sys
+src = json.load(open(sys.argv[1]))["sources"].get(f"giab_{sys.argv[2]}")
+print(src["chr22_path"] if src else "")
+PY
+}
+REGION_ARGS=()
+for strat in segdup low_mappability tandem_repeat_homopolymer all_difficult; do
+  bed=$(giab_path "$strat")
+  [[ -n "$bed" && -f "$bed" ]] || fail "GIAB $strat regions missing: run python scripts/fetch_sources.py --only giab"
+  REGION_ARGS+=(--bed "$strat=$bed")
+done
 
 # -----------------------------------------------------------------------------
 if [[ $SKIP_LOADER -eq 0 ]]; then
@@ -92,14 +116,29 @@ else
 fi
 [[ -f "$PARQUET/load_summary.json" ]] || fail "$PARQUET/load_summary.json is missing: run without --skip-loader"
 
+step "Loading GIAB difficult regions"
+genome-vault regions "${REGION_ARGS[@]}" --contig chr22 --out "$PARQUET"
+
+if [[ -n "$TABLES" ]]; then
+  IFS=',' read -r -a SELECTED <<< "$TABLES"
+  for t in "${SELECTED[@]}"; do
+    [[ -d "$PARQUET/$t" ]] || fail "no Parquet for table $t in $PARQUET"
+  done
+else
+  SELECTED=()
+  for dir in "$PARQUET"/*/; do SELECTED+=("$(basename "$dir")"); done
+fi
+echo "  tables to upload: ${SELECTED[*]}"
+
 # -----------------------------------------------------------------------------
 step "Uploading Parquet to gs://$BUCKET/runs/$RUN_ID/"
-gcloud storage cp --recursive --project="$PROJECT" "$PARQUET" "gs://$BUCKET/runs/$RUN_ID/"
+for t in "${SELECTED[@]}"; do
+  gcloud storage cp --recursive --project="$PROJECT" "$PARQUET/$t" "gs://$BUCKET/runs/$RUN_ID/parquet/"
+done
 
 # -----------------------------------------------------------------------------
 step "Loading tables into $PROJECT:$RAW_DATASET"
-for dir in "$PARQUET"/*/; do
-  table=$(basename "$dir")
+for table in "${SELECTED[@]}"; do
   extra=()
   # Genotypes are the big table; clustering keeps per-variant lookups cheap.
   [[ "$table" == "kgp_genotypes" ]] && extra=("--clustering_fields=variant_key,sample_index")
@@ -111,7 +150,7 @@ done
 
 # -----------------------------------------------------------------------------
 step "Checking BigQuery row counts against the Parquet"
-python - "$PROJECT" "$RAW_DATASET" "$PARQUET" "$RUN_ID" "gs://$BUCKET/runs/$RUN_ID/parquet" "$WORK/bq_load.json" <<'PY'
+python - "$PROJECT" "$RAW_DATASET" "$PARQUET" "$RUN_ID" "gs://$BUCKET/runs/$RUN_ID/parquet" "$WORK/bq_load.json" "${SELECTED[*]}" <<'PY'
 import datetime as dt
 import json
 import pathlib
@@ -120,7 +159,7 @@ import sys
 import pyarrow.parquet as pq
 from google.cloud import bigquery
 
-project, dataset, parquet, run_id, gcs, out = sys.argv[1:7]
+project, dataset, parquet, run_id, gcs, out, uploaded = sys.argv[1:8]
 client = bigquery.Client(project=project, location="US")
 tables, bad = {}, 0
 for d in sorted(p for p in pathlib.Path(parquet).iterdir() if p.is_dir()):
@@ -130,8 +169,11 @@ for d in sorted(p for p in pathlib.Path(parquet).iterdir() if p.is_dir()):
     bad += not ok
     tables[d.name] = {"parquet_rows": local, "bigquery_rows": t.num_rows, "bigquery_bytes": t.num_bytes}
     print(f"  {d.name:20s} parquet {local:>13,}   bigquery {t.num_rows:>13,}   {'OK' if ok else 'MISMATCH'}")
+# Every table is checked, not only the ones uploaded this time: the others
+# must still match the Parquet they were loaded from.
 record = {
     "run_id": run_id,
+    "tables_uploaded": uploaded.split(),
     "loaded_at": dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat(),
     "project": project,
     "dataset": dataset,

@@ -36,6 +36,14 @@ jobs:
             --unrelated-panel tests/fixtures/real/integrated_call_samples_v3.20130502.ALL.panel \
             --reference tests/fixtures/real/grch38_chr22_42050k_42250k.fa \
             --out data/work/parquet
+      - name: Load the GIAB difficult regions for the slice
+        run: |
+          genome-vault regions \
+            --bed segdup=tests/fixtures/real/giab_segdup_22_42050k_42250k.bed.gz \
+            --bed low_mappability=tests/fixtures/real/giab_low_mappability_22_42050k_42250k.bed.gz \
+            --bed tandem_repeat_homopolymer=tests/fixtures/real/giab_tandem_repeat_homopolymer_22_42050k_42250k.bed.gz \
+            --bed all_difficult=tests/fixtures/real/giab_all_difficult_22_42050k_42250k.bed.gz \
+            --out data/work/parquet
       - name: Build and test the warehouse (dbt on DuckDB)
         working-directory: warehouse
         run: dbt build --target local

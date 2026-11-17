@@ -1,6 +1,8 @@
 # ADR-005: pysam over Hail for VCF parsing in this project
 
-**Status:** Accepted
+**Status:** Superseded by [ADR-009](009-cyvcf2-for-genotypes.md) (November 2026)
+
+> Genotypes are parsed with cyvcf2, which returns them as numpy arrays. pysam is still used, but only to cut the indexed development slice in `scripts/fetch_sources.py`.
 
 ## Context
 

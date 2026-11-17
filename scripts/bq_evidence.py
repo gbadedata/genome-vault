@@ -6,6 +6,8 @@ Collects:
   - row counts and sizes of the warehouse tables (table metadata, no query cost);
   - the BigQuery jobs dbt ran, with bytes processed and billed, from
     INFORMATION_SCHEMA.JOBS_BY_USER (dbt labels its jobs; see dbt_project.yml);
+  - what the findings are: rates by GIAB region class, flagged samples by
+    population, ClinVar pathogenic calls that are common, quarantined records;
   - the load record written by scripts/load_bigquery.sh.
 """
 from __future__ import annotations
@@ -21,7 +23,8 @@ from google.cloud import bigquery
 WAREHOUSE_TABLES = [
     "dim_sample", "dim_population", "dim_variant", "fct_genotype", "stg_gnomad",
     "variant_population_freq", "qc_allele_count_reconciliation", "qc_hardy_weinberg",
-    "qc_sample", "gnomad_concordance", "clinvar_in_cohort", "qc_summary",
+    "qc_sample", "gnomad_concordance", "clinvar_in_cohort", "variant_context",
+    "findings_by_region_class", "qc_summary",
 ]
 
 
@@ -33,6 +36,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--project", required=True)
     ap.add_argument("--dataset", default="gv")
+    ap.add_argument("--raw-dataset", default="gv_raw")
     ap.add_argument("--since", required=True, help="UTC start of the dbt run, ISO 8601")
     ap.add_argument("--run-results", required=True, type=Path)
     ap.add_argument("--load-record", type=Path)
@@ -66,6 +70,40 @@ def main() -> None:
         evidence["qc_summary"] = [dict(r) for r in rows]
     except Exception as exc:  # the build may have failed before qc_summary existed
         evidence["qc_summary"] = {"error": str(exc)[:500]}
+
+    # What the findings are (small queries; each reads at most a few MB)
+    ds, raw = f"`{args.project}.{args.dataset}`", f"`{args.project}.{args.raw_dataset}`"
+    finding_queries = {
+        "by_region_class": f"""
+            select finding, region_class, variants, with_finding, rate, share_of_variants, share_of_findings,
+                   rate_ratio, rate_ratio_ci_low, rate_ratio_ci_high
+            from {ds}.findings_by_region_class order by finding, rate_ratio desc""",
+        "variants_by_region_class": f"""
+            select region_class, count(*) as variants from {ds}.variant_context group by region_class order by variants desc""",
+        "region_sources": f"""
+            select stratification, intervals_read, intervals_merged, bases, sha256
+            from {ds}.stg_genome_region_sources order by stratification""",
+        "flagged_samples_by_population": f"""
+            select superpopulation, population, count(*) as samples,
+                   sum(case when abs(coalesce(ti_tv_z, 0)) > 4 then 1 else 0 end) as on_ti_tv,
+                   sum(case when abs(coalesce(het_hom_z, 0)) > 4 then 1 else 0 end) as on_het_hom,
+                   sum(case when abs(coalesce(non_ref_z, 0)) > 4 then 1 else 0 end) as on_non_ref_sites,
+                   round(avg(het_hom_z), 1) as mean_het_hom_z,
+                   sum(case when is_unrelated then 0 else 1 end) as outside_unrelated_set
+            from {ds}.qc_sample where flagged
+            group by superpopulation, population order by samples desc""",
+        "clinvar_common_pathogenic": f"""
+            select variant_id, rsid, gene_symbols, clinical_significance, clinvar_review_status,
+                   max_pop, round(max_pop_af, 4) as max_pop_af
+            from {ds}.clinvar_in_cohort where common_but_pathogenic""",
+        "quarantined_1000g_records": f"select * from {raw}.kgp_quarantine",
+    }
+    evidence["findings"] = {}
+    for key, sql in finding_queries.items():
+        try:
+            evidence["findings"][key] = [dict(r) for r in client.query(sql).result()]
+        except Exception as exc:
+            evidence["findings"][key] = {"error": str(exc)[:300]}
 
     # Table sizes (metadata only)
     sizes = {}
@@ -144,12 +182,59 @@ def render(e: dict) -> str:
     lines += ["", "## Cost", "",
               f"{j['count']} queries; {j['gb_processed']} GB processed, {j['gb_billed']} GB billed; "
               f"largest single query {j['largest_single_query_gb_billed']} GB (cap 20 GB).", ""]
+    f = e.get("findings", {})
+
+    def table(rows, cols: list[tuple[str, str]], fmt=None) -> list[str]:
+        if not isinstance(rows, list):
+            return [f"(not available: {rows})", ""]
+        out = ["| " + " | ".join(h for _, h in cols) + " |", "|" + "---|" * len(cols)]
+        for r in rows:
+            out.append("| " + " | ".join(_cell(r.get(k)) for k, _ in cols) + " |")
+        return out + [""]
+
+    lines += ["## Findings by GIAB region class", "",
+              "Rate of each finding per variant, and its ratio to the rate in not-difficult regions (95% interval).", ""]
+    lines += table(f.get("by_region_class"), [
+        ("finding", "Finding"), ("region_class", "Region class"), ("variants", "Variants"),
+        ("with_finding", "With finding"), ("rate", "Rate"), ("rate_ratio", "Ratio"),
+        ("rate_ratio_ci_low", "95% low"), ("rate_ratio_ci_high", "95% high")])
+    lines += ["Variants by region class:", ""]
+    lines += table(f.get("variants_by_region_class"), [("region_class", "Region class"), ("variants", "Variants")])
+    lines += ["GIAB regions loaded (chr22):", ""]
+    lines += table(f.get("region_sources"), [
+        ("stratification", "Stratification"), ("intervals_merged", "Intervals"), ("bases", "Bases")])
+    lines += ["## Flagged samples by population", ""]
+    lines += table(f.get("flagged_samples_by_population"), [
+        ("superpopulation", "Superpop."), ("population", "Population"), ("samples", "Samples"),
+        ("on_ti_tv", "Ti/Tv"), ("on_het_hom", "Het/hom"), ("on_non_ref_sites", "Non-ref sites"),
+        ("mean_het_hom_z", "Mean het/hom z"), ("outside_unrelated_set", "Not in unrelated set")])
+    lines += ["## ClinVar pathogenic calls common in a population", ""]
+    lines += table(f.get("clinvar_common_pathogenic"), [
+        ("variant_id", "Variant"), ("rsid", "rsID"), ("gene_symbols", "Genes"),
+        ("clinical_significance", "Significance"), ("clinvar_review_status", "Review status"),
+        ("max_pop", "Population"), ("max_pop_af", "AF")])
+    lines += ["## Quarantined 1000 Genomes records", ""]
+    lines += table(f.get("quarantined_1000g_records"), [
+        ("record_number", "Record"), ("chrom", "Chrom"), ("pos", "Pos"), ("ref", "Ref"), ("alt", "Alt"),
+        ("source_id", "Source ID"), ("reason", "Reason")])
+
     lines += ["## Tables", "", "| Table | Type | Rows | GB |", "|---|---|---:|---:|"]
     for k, v in e["tables"].items():
         if v:
             rows = "" if v["rows"] is None else f"{v['rows']:,}"
             lines.append(f"| {k} | {v['type']} | {rows} | {v['gb'] if v['gb'] is not None else ''} |")
     return "\n".join(lines) + "\n"
+
+
+def _cell(v) -> str:
+    if v is None:
+        return ""
+    if isinstance(v, float):
+        return f"{v:.3g}" if abs(v) < 1000 else f"{v:,.0f}"
+    if isinstance(v, int):
+        return f"{v:,}"
+    s = str(v).replace("|", "/")
+    return s if len(s) <= 60 else s[:57] + "..."
 
 
 if __name__ == "__main__":

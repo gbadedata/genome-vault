@@ -59,5 +59,24 @@ models:
       - name: hwe_p_unrel
         data_tests: [not_null]
 
+  - name: variant_context
+    description: GIAB difficult-region flags and one region class per variant.
+    columns:
+      - name: variant_key
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_variant'), field: variant_key}
+      - name: region_class
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['segmental_duplication', 'low_mappability', 'tandem_repeat_or_homopolymer', 'other_difficult', 'not_difficult']
+
+  - name: findings_by_region_class
+    description: Rate of each QC finding per region class, relative to not-difficult regions.
+
   - name: qc_summary
     description: Invariants (must pass) and findings, one row per check.
