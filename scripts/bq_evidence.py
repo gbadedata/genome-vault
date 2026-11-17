@@ -40,12 +40,13 @@ def main() -> None:
     ap.add_argument("--since", required=True, help="UTC start of the dbt run, ISO 8601")
     ap.add_argument("--run-results", required=True, type=Path)
     ap.add_argument("--load-record", type=Path)
+    ap.add_argument("--code-version", default="unknown", help="git commit the run used")
     ap.add_argument("--out", required=True, type=Path)
     args = ap.parse_args()
 
     client = bigquery.Client(project=args.project, location="US")
     evidence: dict = {"generated_at": dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat(),
-                      "project": args.project, "dataset": args.dataset}
+                      "project": args.project, "dataset": args.dataset, "code_version": args.code_version}
 
     # dbt results
     if args.run_results.exists():
@@ -171,7 +172,7 @@ def main() -> None:
 
 def render(e: dict) -> str:
     lines = [f"# BigQuery build on full chromosome 22 ({e['generated_at']})", "",
-             f"Project `{e['project']}`, dataset `{e['dataset']}`, location US.", ""]
+             f"Project `{e['project']}`, dataset `{e['dataset']}`, location US, code version `{e.get('code_version', 'unknown')}`.", ""]
     load = e.get("load")
     if load:
         lines += ["## Load", "", f"Run `{load['run_id']}` from `{load['gcs_prefix']}`.", "",

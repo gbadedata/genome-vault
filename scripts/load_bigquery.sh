@@ -47,6 +47,19 @@ fail() { printf '\nSTOP: %s\n' "$1" >&2; exit 1; }
 
 cd "$(dirname "$0")/.."
 
+# Refuse to run stale code: a pull that failed earlier once left the old code
+# in place and the run silently used it. GV_ALLOW_STALE=1 skips the check.
+if git rev-parse --git-dir >/dev/null 2>&1; then
+  CODE_VERSION="$(git rev-parse --short HEAD)$(git diff --quiet HEAD -- src warehouse scripts || echo '+local-changes')"
+  if [[ "${GV_ALLOW_STALE:-0}" != "1" ]] && git fetch -q origin main 2>/dev/null; then
+    behind=$(git rev-list --count HEAD..origin/main)
+    [[ "$behind" == "0" ]] || { echo "STOP: this copy is $behind commit(s) behind GitHub: run git pull first" >&2; exit 1; }
+  fi
+else
+  CODE_VERSION="unknown"
+fi
+echo "== Code version $CODE_VERSION"
+
 # -----------------------------------------------------------------------------
 step "Pre-flight (project $PROJECT, location $LOCATION)"
 for tool in gcloud bq python genome-vault; do
@@ -150,7 +163,7 @@ done
 
 # -----------------------------------------------------------------------------
 step "Checking BigQuery row counts against the Parquet"
-python - "$PROJECT" "$RAW_DATASET" "$PARQUET" "$RUN_ID" "gs://$BUCKET/runs/$RUN_ID/parquet" "$WORK/bq_load.json" "${SELECTED[*]}" <<'PY'
+python - "$PROJECT" "$RAW_DATASET" "$PARQUET" "$RUN_ID" "gs://$BUCKET/runs/$RUN_ID/parquet" "$WORK/bq_load.json" "${SELECTED[*]}" "$CODE_VERSION" <<'PY'
 import datetime as dt
 import json
 import pathlib
@@ -159,7 +172,7 @@ import sys
 import pyarrow.parquet as pq
 from google.cloud import bigquery
 
-project, dataset, parquet, run_id, gcs, out, uploaded = sys.argv[1:8]
+project, dataset, parquet, run_id, gcs, out, uploaded, code_version = sys.argv[1:9]
 client = bigquery.Client(project=project, location="US")
 tables, bad = {}, 0
 for d in sorted(p for p in pathlib.Path(parquet).iterdir() if p.is_dir()):
@@ -173,6 +186,7 @@ for d in sorted(p for p in pathlib.Path(parquet).iterdir() if p.is_dir()):
 # must still match the Parquet they were loaded from.
 record = {
     "run_id": run_id,
+    "code_version": code_version,
     "tables_uploaded": uploaded.split(),
     "loaded_at": dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat(),
     "project": project,
