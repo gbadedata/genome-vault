@@ -1,23 +1,23 @@
 {
-  "generated_at": "2026-11-17T20:08:33+00:00",
+  "generated_at": "2026-11-17T20:39:46+00:00",
   "project": "genome-vault-202605",
   "dataset": "gv",
   "dbt": {
-    "invocation_id": "583dc572-1b3d-4111-b463-028bdd882771",
+    "invocation_id": "dfb19179-991c-4c8b-b9e6-00d7ae2f136e",
     "dbt_version": "1.13.0b1",
-    "elapsed_seconds": 64.8,
+    "elapsed_seconds": 78.6,
     "statuses": {
-      "success": 22,
-      "pass": 22
+      "success": 26,
+      "pass": 30
     },
     "not_passing": []
   },
   "qc_summary": [
     {
       "kind": "finding",
-      "check_name": "ClinVar pathogenic calls common in a population",
+      "check_name": "share in GIAB difficult regions: hwe_departure",
       "passed": null,
-      "detail": "2"
+      "detail": "93.6% of variants with the finding vs 40.9% of variants tested"
     },
     {
       "kind": "finding",
@@ -27,7 +27,13 @@
     },
     {
       "kind": "finding",
-      "check_name": "frequency differences flagged against gnomAD",
+      "check_name": "ClinVar pathogenic calls common in a population",
+      "passed": null,
+      "detail": "2"
+    },
+    {
+      "kind": "finding",
+      "check_name": "frequency differences flagged against gnomAD (variant-population pairs)",
       "passed": null,
       "detail": "1718"
     },
@@ -39,21 +45,21 @@
     },
     {
       "kind": "finding",
-      "check_name": "HWE departures (exact p < threshold, unrelated)",
+      "check_name": "HWE departures, exact p < threshold, unrelated (variant-population pairs)",
       "passed": null,
       "detail": "11345"
     },
     {
-      "kind": "invariant",
-      "check_name": "gnomAD positions are 0-based (+1 matches best)",
-      "passed": true,
-      "detail": "190739 vs 7609"
+      "kind": "finding",
+      "check_name": "share in GIAB difficult regions: common_but_absent_from_gnomad",
+      "passed": null,
+      "detail": "99.7% of variants with the finding vs 45% of variants tested"
     },
     {
-      "kind": "invariant",
-      "check_name": "allele counts reproduce source (unrelated)",
-      "passed": true,
-      "detail": "5332775"
+      "kind": "finding",
+      "check_name": "share in GIAB difficult regions: gnomad_af_discordant",
+      "passed": null,
+      "detail": "94.9% of variants with the finding vs 41.7% of variants tested"
     },
     {
       "kind": "invariant",
@@ -63,9 +69,9 @@
     },
     {
       "kind": "invariant",
-      "check_name": "exact HWE test reproduces source HWE p-values",
+      "check_name": "allele counts reproduce source (unrelated)",
       "passed": true,
-      "detail": "5325475"
+      "detail": "5332775"
     },
     {
       "kind": "invariant",
@@ -81,6 +87,18 @@
     },
     {
       "kind": "invariant",
+      "check_name": "exact HWE test reproduces source HWE p-values",
+      "passed": true,
+      "detail": "5325475"
+    },
+    {
+      "kind": "invariant",
+      "check_name": "gnomAD positions are 0-based (+1 matches best)",
+      "passed": true,
+      "detail": "190739 vs 7609"
+    },
+    {
+      "kind": "invariant",
       "check_name": "allele counts reproduce source (all samples)",
       "passed": true,
       "detail": "6399330"
@@ -92,6 +110,406 @@
       "detail": "1066555"
     }
   ],
+  "findings": {
+    "by_region_class": [
+      {
+        "finding": "common_but_absent_from_gnomad",
+        "region_class": "tandem_repeat_or_homopolymer",
+        "variants": 53667,
+        "with_finding": 276,
+        "rate": 0.00514282519984348,
+        "share_of_variants": 0.22318472926890126,
+        "share_of_findings": 0.9078947368421053,
+        "rate_ratio": 680.2466320084968,
+        "rate_ratio_ci_low": 95.48159781718857,
+        "rate_ratio_ci_high": 4846.331554325979
+      },
+      {
+        "finding": "common_but_absent_from_gnomad",
+        "region_class": "segmental_duplication",
+        "variants": 37490,
+        "with_finding": 25,
+        "rate": 0.0006668444918644973,
+        "share_of_variants": 0.1559095067786742,
+        "share_of_findings": 0.08223684210526316,
+        "rate_ratio": 88.20418778340891,
+        "rate_ratio_ci_low": 11.951678050982864,
+        "rate_ratio_ci_high": 650.9528376972187
+      },
+      {
+        "finding": "common_but_absent_from_gnomad",
+        "region_class": "low_mappability",
+        "variants": 5538,
+        "with_finding": 2,
+        "rate": 0.00036114120621162876,
+        "share_of_variants": 0.02303085752308076,
+        "share_of_findings": 0.006578947368421052,
+        "rate_ratio": 47.76850848681835,
+        "rate_ratio_ci_low": 4.331947443590775,
+        "rate_ratio_ci_high": 526.7447107261798
+      },
+      {
+        "finding": "common_but_absent_from_gnomad",
+        "region_class": "not_difficult",
+        "variants": 132271,
+        "with_finding": 1,
+        "rate": 7.560236181778319e-06,
+        "share_of_variants": 0.5500748565249938,
+        "share_of_findings": 0.003289473684210526,
+        "rate_ratio": 1.0,
+        "rate_ratio_ci_low": 0.06254630576789326,
+        "rate_ratio_ci_high": 15.988154499659155
+      },
+      {
+        "finding": "common_but_absent_from_gnomad",
+        "region_class": "other_difficult",
+        "variants": 11494,
+        "with_finding": 0,
+        "rate": 0.0,
+        "share_of_variants": 0.047800049904349995,
+        "share_of_findings": 0.0,
+        "rate_ratio": null,
+        "rate_ratio_ci_low": null,
+        "rate_ratio_ci_high": null
+      },
+      {
+        "finding": "gnomad_af_discordant",
+        "region_class": "tandem_repeat_or_homopolymer",
+        "variants": 153094,
+        "with_finding": 700,
+        "rate": 0.004572354239878768,
+        "share_of_variants": 0.1564690371309138,
+        "share_of_findings": 0.7567567567567568,
+        "rate_ratio": 55.471996206474735,
+        "rate_ratio_ci_low": 41.288946701127244,
+        "rate_ratio_ci_high": 74.52702500272635
+      },
+      {
+        "finding": "gnomad_af_discordant",
+        "region_class": "segmental_duplication",
+        "variants": 174400,
+        "with_finding": 147,
+        "rate": 0.0008428899082568807,
+        "share_of_variants": 0.17824473902067597,
+        "share_of_findings": 0.1589189189189189,
+        "rate_ratio": 10.225976234628147,
+        "rate_ratio_ci_low": 7.363534406289015,
+        "rate_ratio_ci_high": 14.201140944200443
+      },
+      {
+        "finding": "gnomad_af_discordant",
+        "region_class": "low_mappability",
+        "variants": 28231,
+        "with_finding": 20,
+        "rate": 0.0007084410754135524,
+        "share_of_variants": 0.028853367128971925,
+        "share_of_findings": 0.021621621621621623,
+        "rate_ratio": 8.59483727334596,
+        "rate_ratio_ci_low": 5.093797977441872,
+        "rate_ratio_ci_high": 14.5021903268326
+      },
+      {
+        "finding": "gnomad_af_discordant",
+        "region_class": "other_difficult",
+        "variants": 52499,
+        "with_finding": 11,
+        "rate": 0.0002095278005295339,
+        "share_of_variants": 0.05365636785462424,
+        "share_of_findings": 0.011891891891891892,
+        "rate_ratio": 2.5420001921009234,
+        "rate_ratio_ci_low": 1.3185427255301028,
+        "rate_ratio_ci_high": 4.900686835190163
+      },
+      {
+        "finding": "gnomad_af_discordant",
+        "region_class": "not_difficult",
+        "variants": 570206,
+        "with_finding": 47,
+        "rate": 8.242635117834607e-05,
+        "share_of_variants": 0.582776488864814,
+        "share_of_findings": 0.05081081081081081,
+        "rate_ratio": 1.0,
+        "rate_ratio_ci_low": 0.6674435477140436,
+        "rate_ratio_ci_high": 1.4982540522339958
+      },
+      {
+        "finding": "hwe_departure",
+        "region_class": "segmental_duplication",
+        "variants": 187563,
+        "with_finding": 4220,
+        "rate": 0.022499106966725847,
+        "share_of_variants": 0.1760997845262629,
+        "share_of_findings": 0.6626884422110553,
+        "rate_ratio": 34.963834439694104,
+        "rate_ratio_ci_low": 31.578770112558,
+        "rate_ratio_ci_high": 38.71175838606195
+      },
+      {
+        "finding": "hwe_departure",
+        "region_class": "low_mappability",
+        "variants": 30093,
+        "with_finding": 484,
+        "rate": 0.01608347456219054,
+        "share_of_variants": 0.028253817734568278,
+        "share_of_findings": 0.07600502512562814,
+        "rate_ratio": 24.99387831877558,
+        "rate_ratio_ci_low": 21.914396936008423,
+        "rate_ratio_ci_high": 28.506098307788715
+      },
+      {
+        "finding": "hwe_departure",
+        "region_class": "tandem_repeat_or_homopolymer",
+        "variants": 160316,
+        "with_finding": 1246,
+        "rate": 0.007772150003742608,
+        "share_of_variants": 0.15051802890821944,
+        "share_of_findings": 0.19566582914572864,
+        "rate_ratio": 12.077997867791359,
+        "rate_ratio_ci_low": 10.79852924236376,
+        "rate_ratio_ci_high": 13.509064912476951
+      },
+      {
+        "finding": "hwe_departure",
+        "region_class": "not_difficult",
+        "variants": 629374,
+        "with_finding": 405,
+        "rate": 0.0006434965537184567,
+        "share_of_variants": 0.5909087921734681,
+        "share_of_findings": 0.06359924623115577,
+        "rate_ratio": 1.0,
+        "rate_ratio_ci_low": 0.8713683931895568,
+        "rate_ratio_ci_high": 1.1476202348120523
+      },
+      {
+        "finding": "hwe_departure",
+        "region_class": "other_difficult",
+        "variants": 57749,
+        "with_finding": 13,
+        "rate": 0.00022511212315364768,
+        "share_of_variants": 0.054219576657481255,
+        "share_of_findings": 0.002041457286432161,
+        "rate_ratio": 0.34982646271037987,
+        "rate_ratio_ci_low": 0.20138956005541503,
+        "rate_ratio_ci_high": 0.6076707947461761
+      }
+    ],
+    "variants_by_region_class": [
+      {
+        "region_class": "not_difficult",
+        "variants": 629783
+      },
+      {
+        "region_class": "segmental_duplication",
+        "variants": 187757
+      },
+      {
+        "region_class": "tandem_repeat_or_homopolymer",
+        "variants": 160760
+      },
+      {
+        "region_class": "other_difficult",
+        "variants": 57793
+      },
+      {
+        "region_class": "low_mappability",
+        "variants": 30462
+      }
+    ],
+    "region_sources": [
+      {
+        "stratification": "all_difficult",
+        "intervals_read": 55175,
+        "intervals_merged": 55175,
+        "bases": 13157868,
+        "sha256": "20ede1fb9e128e61728818b95b398d1339f745aad6e8b3bc2ca8ef511c342f6c"
+      },
+      {
+        "stratification": "low_mappability",
+        "intervals_read": 11654,
+        "intervals_merged": 11654,
+        "bases": 7148877,
+        "sha256": "95ca9fea8ff00f6ca071f08f355862a95f99b277d15ed3d1ba66fd6c80b7a0b9"
+      },
+      {
+        "stratification": "segdup",
+        "intervals_read": 205,
+        "intervals_merged": 205,
+        "bases": 5997248,
+        "sha256": "affbd6f46920726e3552ffb2c8b11ca257cf114bf054f620ef5498980006397e"
+      },
+      {
+        "stratification": "tandem_repeat_homopolymer",
+        "intervals_read": 57258,
+        "intervals_merged": 57258,
+        "bases": 5653447,
+        "sha256": "cbf71423c8e049d4b8336c5cb0be33510272b03f1982bb6cc56c4730da48d458"
+      }
+    ],
+    "flagged_samples_by_population": [
+      {
+        "superpopulation": "AFR",
+        "population": "ASW",
+        "samples": 8,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 7,
+        "mean_het_hom_z": 0.9,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "AFR",
+        "population": "ACB",
+        "samples": 3,
+        "on_ti_tv": 0,
+        "on_het_hom": 2,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": 3.9,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "AMR",
+        "population": "PUR",
+        "samples": 3,
+        "on_ti_tv": 0,
+        "on_het_hom": 0,
+        "on_non_ref_sites": 3,
+        "mean_het_hom_z": 1.1,
+        "outside_unrelated_set": 1
+      },
+      {
+        "superpopulation": "SAS",
+        "population": "PJL",
+        "samples": 3,
+        "on_ti_tv": 0,
+        "on_het_hom": 3,
+        "on_non_ref_sites": 2,
+        "mean_het_hom_z": -5.5,
+        "outside_unrelated_set": 1
+      },
+      {
+        "superpopulation": "SAS",
+        "population": "BEB",
+        "samples": 2,
+        "on_ti_tv": 0,
+        "on_het_hom": 2,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": -4.7,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "SAS",
+        "population": "STU",
+        "samples": 2,
+        "on_ti_tv": 0,
+        "on_het_hom": 2,
+        "on_non_ref_sites": 2,
+        "mean_het_hom_z": -5.3,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "EUR",
+        "population": "GBR",
+        "samples": 1,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 0,
+        "mean_het_hom_z": -4.9,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "AFR",
+        "population": "GWD",
+        "samples": 1,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 0,
+        "mean_het_hom_z": -4.7,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "EAS",
+        "population": "CHS",
+        "samples": 1,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 0,
+        "mean_het_hom_z": -4.7,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "EAS",
+        "population": "CDX",
+        "samples": 1,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": -4.3,
+        "outside_unrelated_set": 0
+      },
+      {
+        "superpopulation": "EAS",
+        "population": "KHV",
+        "samples": 1,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 1,
+        "mean_het_hom_z": -8.1,
+        "outside_unrelated_set": 1
+      },
+      {
+        "superpopulation": "AFR",
+        "population": "ESN",
+        "samples": 1,
+        "on_ti_tv": 0,
+        "on_het_hom": 1,
+        "on_non_ref_sites": 0,
+        "mean_het_hom_z": -6.3,
+        "outside_unrelated_set": 0
+      }
+    ],
+    "clinvar_common_pathogenic": [
+      {
+        "variant_id": "chr22:41795840:G:T",
+        "rsid": "rs75338000",
+        "gene_symbols": "MEI1",
+        "clinical_significance": "Likely_pathogenic",
+        "clinvar_review_status": "criteria_provided,_multiple_submitters,_no_conflicts",
+        "max_pop": "AFR",
+        "max_pop_af": 0.0106
+      },
+      {
+        "variant_id": "chr22:43537404:CCT:C",
+        "rsid": null,
+        "gene_symbols": "EFCAB6|EFCAB6-AS1",
+        "clinical_significance": "Pathogenic",
+        "clinvar_review_status": "criteria_provided,_single_submitter",
+        "max_pop": "EAS",
+        "max_pop_af": 0.0159
+      }
+    ],
+    "quarantined_1000g_records": [
+      {
+        "source": "1000G_30x_phased_panel",
+        "record_number": 273140,
+        "chrom": "chr22",
+        "pos": 22857056,
+        "ref": "T",
+        "alt": "<DEL>",
+        "source_id": "HGSV_245419",
+        "reason": "DUPLICATE_VARIANT"
+      },
+      {
+        "source": "1000G_30x_phased_panel",
+        "record_number": 1038198,
+        "chrom": "chr22",
+        "pos": 49951209,
+        "ref": "G",
+        "alt": "<INS>",
+        "source_id": "HGSV_248347",
+        "reason": "DUPLICATE_VARIANT"
+      }
+    ]
+  },
   "tables": {
     "dim_sample": {
       "type": "TABLE",
@@ -148,67 +566,81 @@
       "rows": 10914,
       "gb": 0.003
     },
+    "variant_context": {
+      "type": "TABLE",
+      "rows": 1066555,
+      "gb": 0.033
+    },
+    "findings_by_region_class": {
+      "type": "TABLE",
+      "rows": 15,
+      "gb": 0.0
+    },
     "qc_summary": {
       "type": "TABLE",
-      "rows": 13,
+      "rows": 16,
       "gb": 0.0
     }
   },
   "bigquery_jobs": {
-    "count": 44,
-    "gb_processed": 26.084,
-    "gb_billed": 26.229,
+    "count": 56,
+    "gb_processed": 26.373,
+    "gb_billed": 26.539,
     "largest_single_query_gb_billed": 5.188,
     "errors": [],
     "top_by_bytes_billed": [
       {
         "node_id": "model_genome_vault_fct_genotype",
         "gb_billed": 5.188,
-        "seconds": 5.197
+        "seconds": 4.061
       },
       {
         "node_id": "model_genome_vault_qc_sample",
         "gb_billed": 4.996,
-        "seconds": 2.224
+        "seconds": 3.275
       },
       {
         "node_id": "model_genome_vault_variant_population_freq",
         "gb_billed": 4.602,
-        "seconds": 3.311
+        "seconds": 9.341
       },
       {
         "node_id": "model_genome_vault_stg_gnomad",
         "gb_billed": 1.892,
-        "seconds": 12.289
+        "seconds": 3.98
       },
       {
         "node_id": "test_genome_vault_relationships_fct_genotype_variant_key__varia",
         "gb_billed": 1.669,
-        "seconds": 0.573
+        "seconds": 0.674
       },
       {
         "node_id": "test_genome_vault_accepted_values_fct_genotype_gt__false__1__2_",
         "gb_billed": 1.661,
-        "seconds": 0.316
+        "seconds": 0.263
       },
       {
         "node_id": "test_genome_vault_relationships_fct_genotype_sample_index__samp",
         "gb_billed": 1.661,
-        "seconds": 0.366
+        "seconds": 0.261
       },
       {
         "node_id": "model_genome_vault_gnomad_concordance",
         "gb_billed": 1.653,
-        "seconds": 3.948
+        "seconds": 4.034
       }
     ]
   },
   "load": {
-    "run_id": "20261117T195041Z",
-    "loaded_at": "2026-11-17T20:07:01+00:00",
+    "run_id": "20261117T203422Z",
+    "tables_uploaded": [
+      "genome_regions",
+      "genome_region_sources"
+    ],
+    "loaded_at": "2026-11-17T20:38:06+00:00",
     "project": "genome-vault-202605",
     "dataset": "gv_raw",
-    "gcs_prefix": "gs://genome-vault-202605-gv-data/runs/20261117T195041Z/parquet",
+    "gcs_prefix": "gs://genome-vault-202605-gv-data/runs/20261117T203422Z/parquet",
     "tables": {
       "clinvar_quarantine": {
         "parquet_rows": 52,
@@ -224,6 +656,16 @@
         "parquet_rows": 1747,
         "bigquery_rows": 1747,
         "bigquery_bytes": 125772
+      },
+      "genome_region_sources": {
+        "parquet_rows": 4,
+        "bigquery_rows": 4,
+        "bigquery_bytes": 658
+      },
+      "genome_regions": {
+        "parquet_rows": 124292,
+        "bigquery_rows": 124292,
+        "bigquery_bytes": 5432065
       },
       "kgp_genotypes": {
         "parquet_rows": 207523893,
