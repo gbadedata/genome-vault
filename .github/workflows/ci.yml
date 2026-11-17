@@ -14,6 +14,7 @@ jobs:
       GV_DUCKDB: ${{ github.workspace }}/data/work/genome_vault.duckdb
       GV_GNOMAD_CSV: ${{ github.workspace }}/tests/fixtures/real/gnomad_v3_chr22_42049000_42251000.csv
       DBT_PROFILES_DIR: ${{ github.workspace }}/warehouse
+      DBT_ENGINE_MANAGE_STATE: "false"  # never use the bundled dbt State cloud plugin
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -66,6 +67,7 @@ jobs:
         working-directory: warehouse
         env:
           DBT_PROFILES_DIR: ${{ github.workspace }}/warehouse/ci
+          DBT_ENGINE_MANAGE_STATE: "false"
         run: dbt compile --target bigquery --no-populate-cache --target-path target-bq
       - name: Parse every compiled file as BigQuery SQL
         run: python scripts/check_bigquery_sql.py warehouse/target-bq/compiled

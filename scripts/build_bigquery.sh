@@ -42,6 +42,11 @@ echo "== Project $PROJECT"
 
 export GV_PROJECT_ID="$PROJECT"
 export DBT_PROFILES_DIR="$ROOT/warehouse"
+# dbt-core 1.12 bundles the dbt State plugin (a dbt Labs cloud service that
+# needs an account and sends run metadata off the machine). It is opt-in, but
+# a user_settings.yml left by another dbt version can switch it on, and then
+# the build stops to ask for a browser login. This project never uses it.
+export DBT_ENGINE_MANAGE_STATE=false
 started="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 echo "== dbt build on BigQuery (project $PROJECT)"
