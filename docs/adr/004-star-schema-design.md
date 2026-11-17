@@ -1,6 +1,8 @@
 # ADR-004: Star schema with separate sample and variant dimensions
 
-**Status:** Accepted
+**Status:** Superseded by [ADR-008](008-sparse-genotype-fact.md) (November 2026)
+
+> The star schema survives, but the fact table changed: it is a sparse genotype fact (non-reference calls only), and the variant dimension carries gene, ClinVar and GIAB region context.
 
 ## Context
 

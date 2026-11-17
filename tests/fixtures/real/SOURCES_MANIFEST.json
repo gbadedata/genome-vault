@@ -77,6 +77,54 @@
       "last_modified_ms": "1589391345248",
       "schema_path": "data/sources/gnomad_v3_chr22_schema.json",
       "retrieved_at": "2026-11-17T16:13:09+00:00"
+    },
+    "giab_segdup": {
+      "url": "https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/genome-stratifications/v3.6/GRCh38%40all/SegmentalDuplications/GRCh38_segdups.bed.gz",
+      "path": "data/full/giab/v3.6_GRCh38_segdups.bed.gz",
+      "bytes": 65098,
+      "content_length": 65098,
+      "last_modified": "Thu, 24 Apr 2025 18:35:15 GMT",
+      "sha256": "09ac029a7d0d681a9f0ed6581a6bc10fc708a834bc3f91c46a9bef504f6055c5",
+      "retrieved_at": "2026-11-17T20:28:25+00:00",
+      "giab_version": "v3.6",
+      "chr22_path": "data/full/giab/v3.6_segdup_chr22.bed.gz",
+      "chr22_intervals": 205
+    },
+    "giab_low_mappability": {
+      "url": "https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/genome-stratifications/v3.6/GRCh38%40all/Mappability/GRCh38_lowmappabilityall.bed.gz",
+      "path": "data/full/giab/v3.6_GRCh38_lowmappabilityall.bed.gz",
+      "bytes": 4466885,
+      "content_length": 4466885,
+      "last_modified": "Thu, 24 Apr 2025 18:36:00 GMT",
+      "sha256": "38707879ab51dcee3dd3331c082e2d9552a9f9d487d4de84f9ebae5b5c556d56",
+      "retrieved_at": "2026-11-17T20:28:27+00:00",
+      "giab_version": "v3.6",
+      "chr22_path": "data/full/giab/v3.6_low_mappability_chr22.bed.gz",
+      "chr22_intervals": 11654
+    },
+    "giab_tandem_repeat_homopolymer": {
+      "url": "https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/genome-stratifications/v3.6/GRCh38%40all/LowComplexity/GRCh38_AllTandemRepeatsandHomopolymers_slop5.bed.gz",
+      "path": "data/full/giab/v3.6_GRCh38_AllTandemRepeatsandHomopolymers_slop5.bed.gz",
+      "bytes": 30357839,
+      "content_length": 30357839,
+      "last_modified": "Thu, 24 Apr 2025 18:35:27 GMT",
+      "sha256": "f548d0ca1568d66b434717703d126245ecd3c58c2ea49a773820b4fb6fe4569f",
+      "retrieved_at": "2026-11-17T20:28:42+00:00",
+      "giab_version": "v3.6",
+      "chr22_path": "data/full/giab/v3.6_tandem_repeat_homopolymer_chr22.bed.gz",
+      "chr22_intervals": 57258
+    },
+    "giab_all_difficult": {
+      "url": "https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/genome-stratifications/v3.6/GRCh38%40all/Union/GRCh38_alldifficultregions.bed.gz",
+      "path": "data/full/giab/v3.6_GRCh38_alldifficultregions.bed.gz",
+      "bytes": 31493049,
+      "content_length": 31493049,
+      "last_modified": "Thu, 24 Apr 2025 18:35:13 GMT",
+      "sha256": "7cc5f35717ffeed7032ee7a88e063d0cd78510fa8322e5d747fed3f0b2e5becd",
+      "retrieved_at": "2026-11-17T20:29:08+00:00",
+      "giab_version": "v3.6",
+      "chr22_path": "data/full/giab/v3.6_all_difficult_chr22.bed.gz",
+      "chr22_intervals": 55175
     }
   },
   "fixtures": {
@@ -107,6 +155,26 @@
     "ensembl_genes_chr22_all": {
       "path": "data/full/ensembl_genes_22.gff3.gz",
       "count": 1747
+    },
+    "giab_segdup": {
+      "path": "tests/fixtures/real/giab_segdup_22_42050k_42250k.bed.gz",
+      "count": 3,
+      "sha256": "d5e65119e8d5e80847c4e711399e652720ee97b7dbf084797290af3a37bf0a3e"
+    },
+    "giab_low_mappability": {
+      "path": "tests/fixtures/real/giab_low_mappability_22_42050k_42250k.bed.gz",
+      "count": 72,
+      "sha256": "867b3179d5df2f336750fc9bb73ef38ce5b2feb4dde0e076a07f2901808dbfbd"
+    },
+    "giab_tandem_repeat_homopolymer": {
+      "path": "tests/fixtures/real/giab_tandem_repeat_homopolymer_22_42050k_42250k.bed.gz",
+      "count": 311,
+      "sha256": "c5f514e01bc5e81eeafc0cd38a2884a33dbfe35e0910f472274f552af3ce96bb"
+    },
+    "giab_all_difficult": {
+      "path": "tests/fixtures/real/giab_all_difficult_22_42050k_42250k.bed.gz",
+      "count": 335,
+      "sha256": "b6cd2e85b225fb2cbfc6c498a478b1dd41371805ef83d363e5aad6bad0033d14"
     }
   }
 }

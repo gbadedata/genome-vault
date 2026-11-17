@@ -90,6 +90,12 @@ load-slice:  ## Load the committed real slice (CYP2D6 region, 3,202 samples) int
 	  --unrelated-panel $(SLICE)/integrated_call_samples_v3.20130502.ALL.panel \
 	  --reference $(SLICE)/grch38_chr22_42050k_42250k.fa \
 	  --out $(PARQUET)
+	$(PYTHON) -m genome_vault.cli regions \
+	  --bed segdup=$(SLICE)/giab_segdup_22_42050k_42250k.bed.gz \
+	  --bed low_mappability=$(SLICE)/giab_low_mappability_22_42050k_42250k.bed.gz \
+	  --bed tandem_repeat_homopolymer=$(SLICE)/giab_tandem_repeat_homopolymer_22_42050k_42250k.bed.gz \
+	  --bed all_difficult=$(SLICE)/giab_all_difficult_22_42050k_42250k.bed.gz \
+	  --out $(PARQUET)
 
 warehouse-local:  ## Build and test the dbt warehouse on DuckDB from the loaded Parquet.
 	cd warehouse && DBT_PROFILES_DIR=. GV_PARQUET=$(CURDIR)/$(PARQUET) GV_DUCKDB=$(CURDIR)/$(DUCKDB) \

@@ -1,6 +1,8 @@
 # ADR-006: Looker Studio over Metabase or Superset for BI
 
-**Status:** Accepted
+**Status:** Deferred (November 2026)
+
+> No dashboard has been built in the rebuild yet. The evidence in `docs/evidence/` is generated from the warehouse instead. This ADR is kept for when a dashboard is added.
 
 ## Context
 

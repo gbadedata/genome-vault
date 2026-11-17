@@ -1,6 +1,8 @@
 # ADR-002: Dataflow over Cloud Functions for ingestion
 
-**Status:** Accepted
+**Status:** Superseded by [ADR-007](007-python-loader-and-bq-load.md) (November 2026)
+
+> The November 2026 rebuild loads one chromosome with a Python loader and `bq load`. Full chr22 loads in under 6 minutes on a laptop, so a Beam cluster added cost and moving parts without adding capacity that was needed.
 
 ## Context
 
