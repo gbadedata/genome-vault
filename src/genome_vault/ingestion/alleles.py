@@ -60,5 +60,15 @@ def check_alleles(ref: str, alts: tuple[str, ...] | None) -> str | None:
     return None
 
 
-def variant_id(chrom: str, pos: int, ref: str, alt: str) -> str:
+def variant_id(chrom: str, pos: int, ref: str, alt: str, end: int | None = None, sv_len: int | None = None) -> str:
+    """Stable identity for a variant: chrom:pos:ref:alt.
+
+    A symbolic structural-variant allele (<DEL>, <INS:ME:ALU>, ...) says what
+    kind of event it is, not where it stops: two different deletions can start
+    at the same base. For those alleles the end position and SV length are part
+    of the identity, as chrom:pos:ref:alt:end:svlen. Sequence-resolved alleles
+    are fully described by pos, ref and alt, so their identity is unchanged.
+    """
+    if SYMBOLIC.match(alt) and (end is not None or sv_len is not None):
+        return f"{chrom}:{pos}:{ref}:{alt}:{'' if end is None else end}:{'' if sv_len is None else sv_len}"
     return f"{chrom}:{pos}:{ref}:{alt}"

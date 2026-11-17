@@ -65,3 +65,15 @@ def test_every_vcf_sample_is_in_the_pedigree(loaded):
 
 def test_clinvar_contigs_are_normalised(loaded):
     assert q(loaded, "select distinct chrom from clinvar_variants") == [("chr22",)]
+
+
+def test_structural_variant_identity_includes_end_and_length(loaded):
+    rows = q(loaded, """select variant_id, pos, ref, alt, end_pos, sv_len from kgp_variants
+                        where variant_class = 'SV' order by pos""")
+    assert len(rows) == 9
+    for vid, pos, ref, alt, end, sv_len in rows:
+        assert vid == f"chr22:{pos}:{ref}:{alt}:{end}:{sv_len}"
+    # sequence-resolved variants keep the plain chrom:pos:ref:alt form
+    plain = q(loaded, """select count(*) from kgp_variants
+                         where variant_class <> 'SV' and variant_id <> concat(chrom, ':', pos, ':', ref, ':', alt)""")
+    assert plain == [(0,)]

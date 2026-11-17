@@ -74,8 +74,9 @@ union all
 select 'finding', 'HWE departures, exact p < threshold, unrelated (variant-population pairs)', null,
        cast((select count(*) from {{ ref('qc_hardy_weinberg') }} where hwe_departure) as {{ dbt.type_string() }})
 union all
-select 'finding', 'samples flagged by QC z-scores', null,
-       cast((select count(*) from {{ ref('qc_sample') }} where flagged) as {{ dbt.type_string() }})
+select 'finding', 'samples flagged by QC z-scores (within population; within superpopulation)', null,
+       concat(cast((select count(*) from {{ ref('qc_sample') }} where flagged) as {{ dbt.type_string() }}), '; ',
+              cast((select count(*) from {{ ref('qc_sample') }} where flagged_by_superpop) as {{ dbt.type_string() }}))
 union all
 select 'finding', 'ClinVar pathogenic calls common in a population', null,
        cast((select count(*) from {{ ref('clinvar_in_cohort') }} where common_but_pathogenic) as {{ dbt.type_string() }})

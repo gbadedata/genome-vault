@@ -1,6 +1,15 @@
--- Per-sample QC over SNVs: transitions/transversions and het/hom-alt ratio,
--- with z-scores within each superpopulation. |z| > 4 is flagged for review;
--- on a small region these ratios are noisy, so flags are informational.
+-- Per-sample QC over SNVs: transitions/transversions, het/hom-alt ratio and
+-- the number of non-reference sites, each as a z-score within the sample's
+-- population (26 groups). |z| > 4 on any metric is flagged for review.
+--
+-- Why population, not superpopulation: scored against the five
+-- superpopulations, the full chr22 build flagged 27 samples, and they traced to
+-- ancestry, not data quality. 14 were in the admixed ASW, ACB and PUR
+-- populations, whose mixed ancestry moves these counts away from the
+-- superpopulation mean; most of the rest had a heterozygosity deficit
+-- typical of their population. The superpopulation z-scores are kept
+-- (*_z_superpop) so the two can be compared. On a small region the ratios are
+-- noisy, so flags are informational.
 with per_sample as (
     select
         g.sample_index,
@@ -28,13 +37,16 @@ ratios as (
 z as (
     select
         *,
-        {{ safe_div('ti_tv - avg(ti_tv) over (partition by superpopulation)', 'stddev_samp(ti_tv) over (partition by superpopulation)') }} as ti_tv_z,
-        {{ safe_div('het_hom_ratio - avg(het_hom_ratio) over (partition by superpopulation)', 'stddev_samp(het_hom_ratio) over (partition by superpopulation)') }} as het_hom_z,
-        {{ safe_div('snv_non_ref_sites - avg(snv_non_ref_sites) over (partition by superpopulation)', 'stddev_samp(snv_non_ref_sites) over (partition by superpopulation)') }} as non_ref_z
+        {% for metric, col in [('ti_tv', 'ti_tv'), ('het_hom_ratio', 'het_hom'), ('snv_non_ref_sites', 'non_ref')] %}
+        {{ safe_div(metric ~ ' - avg(' ~ metric ~ ') over (partition by population)', 'stddev_samp(' ~ metric ~ ') over (partition by population)') }} as {{ col }}_z,
+        {{ safe_div(metric ~ ' - avg(' ~ metric ~ ') over (partition by superpopulation)', 'stddev_samp(' ~ metric ~ ') over (partition by superpopulation)') }} as {{ col }}_z_superpop{{ ',' if not loop.last }}
+        {% endfor %}
     from ratios
 )
 
 select
     *,
-    (abs(coalesce(ti_tv_z, 0)) > 4 or abs(coalesce(het_hom_z, 0)) > 4 or abs(coalesce(non_ref_z, 0)) > 4) as flagged
+    (abs(coalesce(ti_tv_z, 0)) > 4 or abs(coalesce(het_hom_z, 0)) > 4 or abs(coalesce(non_ref_z, 0)) > 4) as flagged,
+    (abs(coalesce(ti_tv_z_superpop, 0)) > 4 or abs(coalesce(het_hom_z_superpop, 0)) > 4
+        or abs(coalesce(non_ref_z_superpop, 0)) > 4) as flagged_by_superpop
 from z

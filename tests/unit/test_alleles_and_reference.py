@@ -64,3 +64,17 @@ def test_reference_slice_offsets(tmp_path):
     assert ref.check_ref("chr22", 100, "AA") == "unchecked"  # starts before the slice
     assert ref.check_ref("chr22", 110, "AC") == "unchecked"  # runs past the end
     assert ref.check_ref("chr21", 101, "A") == "unchecked"
+
+
+def test_symbolic_alleles_carry_end_and_length_in_their_identity():
+    # Illustrative values for the function on its own: two deletions of
+    # different lengths starting at the same base must not share an identity.
+    # The real structural variants are checked in test_load_real_slice.py.
+    a = al.variant_id("chr22", 22857056, "T", "<DEL>", end=22857500, sv_len=-444)
+    b = al.variant_id("chr22", 22857056, "T", "<DEL>", end=22861000, sv_len=-3944)
+    assert a != b
+    assert a == "chr22:22857056:T:<DEL>:22857500:-444"
+
+
+def test_sequence_resolved_alleles_keep_the_plain_identity():
+    assert al.variant_id("chr22", 42126611, "C", "G", end=42126611, sv_len=None) == "chr22:42126611:C:G"
