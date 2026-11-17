@@ -78,5 +78,18 @@ models:
   - name: findings_by_region_class
     description: Rate of each QC finding per region class, relative to not-difficult regions.
 
+  - name: api_variant
+    description: Serving table for the API, one row per variant; clustered by chrom and pos on BigQuery.
+    columns:
+      - name: variant_id
+        data_tests: [unique, not_null]
+      - name: variant_key
+        data_tests: [unique, not_null]
+
+  - name: api_gene
+    columns:
+      - name: gene_id
+        data_tests: [unique, not_null]
+
   - name: qc_summary
     description: Invariants (must pass) and findings, one row per check.

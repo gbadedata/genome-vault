@@ -68,14 +68,14 @@ select
     {{ safe_div('b.variants', 't.all_variants') }} as share_of_variants,
     {{ safe_div('b.with_finding', 't.all_with_finding') }} as share_of_findings,
     case when b.with_finding > 0 and z.a0 > 0
-         then (cast(b.with_finding as {{ dbt.type_float() }}) / b.variants) / (cast(z.a0 as {{ dbt.type_float() }}) / z.n0)
+         then (cast(b.with_finding as {{ float_type() }}) / b.variants) / (cast(z.a0 as {{ float_type() }}) / z.n0)
     end as rate_ratio,
     case when b.with_finding > 0 and z.a0 > 0
-         then exp(ln((cast(b.with_finding as {{ dbt.type_float() }}) / b.variants) / (cast(z.a0 as {{ dbt.type_float() }}) / z.n0))
+         then exp(ln((cast(b.with_finding as {{ float_type() }}) / b.variants) / (cast(z.a0 as {{ float_type() }}) / z.n0))
                   - 1.96 * sqrt(1.0 / b.with_finding - 1.0 / b.variants + 1.0 / z.a0 - 1.0 / z.n0))
     end as rate_ratio_ci_low,
     case when b.with_finding > 0 and z.a0 > 0
-         then exp(ln((cast(b.with_finding as {{ dbt.type_float() }}) / b.variants) / (cast(z.a0 as {{ dbt.type_float() }}) / z.n0))
+         then exp(ln((cast(b.with_finding as {{ float_type() }}) / b.variants) / (cast(z.a0 as {{ float_type() }}) / z.n0))
                   + 1.96 * sqrt(1.0 / b.with_finding - 1.0 / b.variants + 1.0 / z.a0 - 1.0 / z.n0))
     end as rate_ratio_ci_high
 from by_class as b

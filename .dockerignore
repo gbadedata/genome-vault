@@ -1,0 +1,5 @@
+*
+!deploy/api/requirements.txt
+!src/genome_vault/__init__.py
+!src/genome_vault/api/
+**/__pycache__

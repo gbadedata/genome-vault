@@ -131,3 +131,6 @@ warehouse/logs/
 warehouse/dbt_packages/
 warehouse/.user.yml
 warehouse/target-bq/
+
+# written by scripts/deploy_api.sh
+infra/terraform/environments/dev/api_image.auto.tfvars

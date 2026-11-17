@@ -23,4 +23,4 @@ CI runs three jobs:
 
 - A BigQuery-only syntax error is caught in CI, not in the first cloud run. The first full BigQuery build passed 44 of 44 models and tests.
 - Some idioms are written longhand. Interval joins use explicit window keys instead of DuckDB's range join, and `QUALIFY` gets a `where true`.
-- Results agree across engines by construction, not by luck: the same invariants run on both.
+- Results agree across engines by construction, not by luck: the same invariants run on both, at the same precision. `float_type()` gives double precision on both, because `dbt.type_float()` is a 4-byte REAL on DuckDB.

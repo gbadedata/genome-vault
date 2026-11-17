@@ -1,8 +1,8 @@
 # ADR-003: Django + DRF over Flask for the API
 
-**Status:** Superseded (November 2026)
+**Status:** Superseded by [ADR-015](015-read-only-api-on-cloud-run.md) (November 2026)
 
-> Django was dropped in the November 2026 rebuild. The API is being rebuilt as a small read-only FastAPI service on Cloud Run; it gets its own ADR when it ships.
+> Django was dropped in the November 2026 rebuild. The API is a small read-only FastAPI service on Cloud Run; see ADR-015.
 
 ## Context
 

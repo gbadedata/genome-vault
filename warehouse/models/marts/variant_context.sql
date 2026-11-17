@@ -1,4 +1,4 @@
-{{ config(cluster_by = ['region_class'] if target.type == 'bigquery' else none) }}
+{{ config(cluster_by = ['variant_key'] if target.type == 'bigquery' else none) }}
 -- Genomic context of every variant, from the Genome in a Bottle (NIST) GRCh38
 -- stratifications: is it in a segmental duplication, a low-mappability region,
 -- a tandem repeat or homopolymer, or any GIAB difficult region?
