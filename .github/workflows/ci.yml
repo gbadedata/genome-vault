@@ -42,3 +42,37 @@ jobs:
       - name: Show the QC summary
         working-directory: warehouse
         run: dbt show --inline "select kind, check_name, passed, detail from {{ ref('qc_summary') }}" --limit 50
+
+  bigquery-sql:
+    name: Compile the warehouse for BigQuery and parse it
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install "dbt-bigquery>=1.8,<2.0" "sqlglot>=25"
+      - name: Compile for BigQuery (offline profile, no credentials)
+        working-directory: warehouse
+        env:
+          DBT_PROFILES_DIR: ${{ github.workspace }}/warehouse/ci
+        run: dbt compile --target bigquery --no-populate-cache --target-path target-bq
+      - name: Parse every compiled file as BigQuery SQL
+        run: python scripts/check_bigquery_sql.py warehouse/target-bq/compiled
+
+  terraform:
+    name: Terraform fmt and validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/terraform/environments/dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+      - run: terraform fmt -check -recursive ../..
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate

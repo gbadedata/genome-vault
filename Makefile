@@ -5,7 +5,7 @@
 
 .PHONY: help setup install lint lint-fix typecheck test test-unit test-integration \
         clean tf-init tf-plan tf-apply tf-destroy tf-fmt bq-bootstrap \
-        fetch load-slice warehouse-local slice
+        fetch load-slice warehouse-local slice load-bq warehouse-bq
 
 # Default goal is help
 .DEFAULT_GOAL := help
@@ -97,6 +97,12 @@ warehouse-local:  ## Build and test the dbt warehouse on DuckDB from the loaded 
 	  $(CURDIR)/$(VENV)/bin/dbt build --target local
 
 slice: load-slice warehouse-local  ## Load the real slice and build the warehouse end to end.
+
+load-bq:  ## Load full chr22 and load it into BigQuery gv_raw (needs terraform apply).
+	bash scripts/load_bigquery.sh
+
+warehouse-bq:  ## dbt build on BigQuery, then write docs/evidence/bigquery_full_chr22.*
+	bash scripts/build_bigquery.sh
 
 # -----------------------------------------------------------------------------
 # Terraform

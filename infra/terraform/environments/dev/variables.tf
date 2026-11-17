@@ -19,9 +19,14 @@ variable "region" {
 }
 
 variable "bq_location" {
-  description = "BigQuery location. Use 'EU' or 'US' for multi-region, or a specific region like 'europe-west2'."
+  description = "Location of the BigQuery datasets and the data bucket. Must be US: the warehouse joins the public gnomAD v3 table (bigquery-public-data.gnomAD), which is in US."
   type        = string
-  default     = "EU"
+  default     = "US"
+
+  validation {
+    condition     = var.bq_location == "US"
+    error_message = "bq_location must be US, where the public gnomAD dataset lives; BigQuery cannot join across locations."
+  }
 }
 
 variable "environment" {

@@ -1,0 +1,13 @@
+# CI only: lets `dbt compile --target bigquery` render BigQuery SQL without
+# credentials. Nothing connects to BigQuery with this profile.
+genome_vault:
+  target: bigquery
+  outputs:
+    bigquery:
+      type: bigquery
+      method: oauth-secrets
+      token: offline-compile-only
+      project: genome-vault-202605
+      dataset: gv
+      location: US
+      threads: 1

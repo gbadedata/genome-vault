@@ -31,3 +31,18 @@ output "budget_id" {
   description = "ID of the monthly budget alert."
   value       = google_billing_budget.monthly_cap.id
 }
+
+output "data_bucket" {
+  description = "Bucket for the loader's Parquet output."
+  value       = google_storage_bucket.data.name
+}
+
+output "raw_dataset" {
+  description = "BigQuery dataset for loader tables."
+  value       = google_bigquery_dataset.raw.dataset_id
+}
+
+output "warehouse_dataset" {
+  description = "BigQuery dataset for dbt models."
+  value       = google_bigquery_dataset.warehouse.dataset_id
+}
