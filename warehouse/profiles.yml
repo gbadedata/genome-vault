@@ -9,7 +9,7 @@ genome_vault:
     bigquery:
       type: bigquery
       method: oauth
-      project: "{{ env_var('GCP_PROJECT_ID', 'genome-vault-202605') }}"
+      project: "{{ env_var('GV_PROJECT_ID', 'genome-vault-202605') }}"
       dataset: gv
       location: US          # gnomAD's public dataset is in US; BigQuery cannot join across locations
       threads: 4
