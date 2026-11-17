@@ -9,6 +9,7 @@ On Cloud Run the backend is BigQuery (see infra/terraform/environments/dev/api.t
 """
 from __future__ import annotations
 
+import logging
 import re
 import threading
 import time
@@ -21,6 +22,8 @@ from fastapi.responses import JSONResponse
 from genome_vault.api import queries as q
 from genome_vault.api.backends import Backend, BigQueryBackend, BudgetExceeded, DuckDBBackend
 from genome_vault.api.config import Settings
+
+log = logging.getLogger("genome_vault.api")
 
 POPULATIONS = ("AFR", "AMR", "EAS", "EUR", "SAS")
 VARIANT_ID = re.compile(r"^(chr[0-9XYM]{1,2}):(\d{1,9}):\S+$")
@@ -162,6 +165,14 @@ def create_app(backend: Backend | None = None, settings: Settings | None = None)
             return db().query(sql, params)
         except BudgetExceeded as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
+        except Exception as exc:
+            # BigQuery refuses a query whose estimate exceeds maximum_bytes_billed.
+            # Say so plainly (and log it) rather than returning a bare 500.
+            if "bytesBilledLimitExceeded" in str(exc) or "exceeded limit for bytes billed" in str(exc).lower():
+                log.warning("query refused by the per-query byte cap: %s", exc)
+                raise HTTPException(status_code=503, detail="query refused by the service's per-query cost cap") from exc
+            log.exception("query failed")
+            raise
 
     @app.middleware("http")
     async def rate_limit(request: Request, call_next):
@@ -184,9 +195,14 @@ def create_app(backend: Backend | None = None, settings: Settings | None = None)
                          "/variants?rsid=rs5758566", "/genes/NAGA", "/samples/HG00096", "/qc/summary"],
         }
 
-    @app.get("/health", summary="Liveness (does not query the warehouse)")
+    @app.get("/health", summary="Liveness (does not query the warehouse), and today's BigQuery usage")
     def health() -> dict[str, Any]:
-        return {"status": "ok", "backend": settings.backend, "code_version": settings.code_version}
+        body: dict[str, Any] = {"status": "ok", "backend": settings.backend, "code_version": settings.code_version}
+        b = state["backend"]
+        if isinstance(b, BigQueryBackend):
+            body["bigquery_bytes_billed_today"] = b.bytes_billed_today
+            body["bigquery_daily_budget_bytes"] = b.daily_bytes
+        return body
 
     @app.get("/variants/{variant_id}", summary="One variant, with frequencies, QC flags, region and ClinVar")
     def get_variant(variant_id: str = Path(..., examples=["chr22:42058350:G:A"])) -> dict[str, Any]:
@@ -210,7 +226,11 @@ def create_app(backend: Backend | None = None, settings: Settings | None = None)
         if rsid is not None:
             if not RSID.match(rsid):
                 raise HTTPException(400, "rsid must look like rs5758566")
-            rows = run(q.VARIANTS_BY_RSID, rsid=rsid)
+            hits = run(q.RSID_POSITIONS, rsid=rsid)
+            rows: list[dict[str, Any]] = []
+            for chrom_ in sorted({h["chrom"] for h in hits}):
+                ps = [h["pos"] for h in hits if h["chrom"] == chrom_]
+                rows += run(q.VARIANTS_AT_POSITIONS, chrom=chrom_, first_pos=min(ps), last_pos=max(ps), rsid=rsid)
             return {"rsid": rsid, "count": len(rows), "variants": [variant_summary(r) for r in rows]}
         if start is None or end is None:
             raise HTTPException(400, "give start and end (1-based, inclusive), or rsid")

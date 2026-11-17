@@ -43,6 +43,8 @@ def main() -> int:
         failures += not ok
         results.append({"path": path, "status": r.status_code, "expected": status, "ms": ms, "ok": ok, "check": what})
         print(f"  {'OK  ' if ok else 'FAIL'} {r.status_code} {ms:>5} ms  {path}  {what}")
+        if not ok:
+            print(f"         response: {r.text[:300]}")
         return body or {}
 
     print(f"Smoke test of {base}")
@@ -68,7 +70,12 @@ def main() -> int:
     check("/variants/chr22:1:A:G", 404, what="unknown variant")
     check("/variants?chrom=chr22&start=1&end=5000000", 400, what="region too large")
 
-    summary = {"url": base, "checked_at": dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat(),
+    usage = requests.get(base + "/health", timeout=60).json()
+    billed = usage.get("bigquery_bytes_billed_today")
+    if billed is not None:
+        print(f"  BigQuery billed so far today by this instance: {billed / 1e6:,.0f} MB "
+              f"(daily budget {usage['bigquery_daily_budget_bytes'] / 1e9:,.0f} GB)")
+    summary = {"url": base, "bigquery_bytes_billed_today": billed, "checked_at": dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat(),
                "passed": len(results) - failures, "failed": failures, "gene_naga_variants": g.get("variants_overlapping"),
                "calls": results}
     if args.out:

@@ -1,8 +1,19 @@
-{{ config(materialized = 'table', cluster_by = (['chrom', 'pos'] if target.type == 'bigquery' else none)) }}
+{{ config(
+    materialized = 'table',
+    partition_by = ({'field': 'pos', 'data_type': 'int64',
+                     'range': {'start': 0, 'end': 51000000, 'interval': 100000}}
+                    if target.type == 'bigquery' else none),
+    cluster_by = (['chrom', 'pos'] if target.type == 'bigquery' else none)
+) }}
 -- Serving table for the API: one row per variant, with everything a lookup
--- returns. Clustered by chrom and pos on BigQuery, so a lookup by position (or
--- by variant_id, whose position the API parses first) reads a few blocks
--- instead of the table.
+-- returns.
+--
+-- On BigQuery it is partitioned into 100 kb position ranges (510 partitions
+-- cover chr22's 50.8 Mb) and clustered by position within them. Partitioning
+-- is what makes lookups affordable under the API's per-query byte cap:
+-- BigQuery checks maximum_bytes_billed against its pre-run estimate, and that
+-- estimate reflects partition pruning but not cluster pruning. Clustered
+-- alone, a one-row lookup was estimated at the full table and refused.
 {% set pops = ['afr', 'amr', 'eas', 'eur', 'sas'] %}
 with gnomad as (
     select

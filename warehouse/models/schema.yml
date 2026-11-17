@@ -86,6 +86,16 @@ models:
       - name: variant_key
         data_tests: [unique, not_null]
 
+  - name: api_rsid
+    columns:
+      - name: rsid
+        data_tests: [not_null]
+      - name: variant_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('api_variant'), field: variant_id}
+
   - name: api_gene
     columns:
       - name: gene_id
